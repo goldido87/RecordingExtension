@@ -78,12 +78,15 @@ $("document").ready(function()
             entry.appendChild(img);
             list.appendChild(entry);
         } 
+
+        jQuery("ul li").append("<hr size='3' style='color:#333;background-color:#333;' />");
   });
 });
 
 function clear()
 {
     DB_clear();
+    ExtensionData.commands = [];
     history.go(0);
 }
 
