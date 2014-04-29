@@ -36,20 +36,6 @@ function isEmpty(obj) {
  // EVENTS //
 ////////////
 
-/*chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-  if (request.screenshot == "hello"){
-    var1 = request.var1;
-    console.log(var1);
-    
-    //ExtensionData.commands.push({id: "ScreenShot", name: var1});
-    //DB_save();
-
-  }
-  else{
-    sendResponse({});    // Stop
-  }
-});*/
-
 $("document").ready(function() 
 {
       //////////////////
@@ -79,14 +65,18 @@ $("document").ready(function()
             list.appendChild(entry);
         } 
 
+        // Add seperating line after every list item
         jQuery("ul li").append("<hr size='3' style='color:#333;background-color:#333;' />");
   });
 });
 
 function clear()
 {
+    // Clear persistent data
     DB_clear();
+    // Clear cached array
     ExtensionData.commands = [];
+    // Refresh page
     history.go(0);
 }
 
