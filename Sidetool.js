@@ -59,8 +59,11 @@ $("document").ready(function()
             var entry = document.createElement('li');
             var br = document.createElement('br');
 
+            entry.appendChild(getImageElement(ExtensionData.commands[i].id));
+            entry.appendChild(br);
             entry.appendChild(boldHTML("Type: "));
             entry.appendChild(document.createTextNode(ExtensionData.commands[i].id + " "));
+            br = document.createElement('br');
             entry.appendChild(br);
             entry.appendChild(boldHTML("Data: "));
             entry.appendChild(document.createTextNode(ExtensionData.commands[i].name));              
@@ -88,4 +91,34 @@ function boldHTML(text) {
   var element = document.createElement("b");
   element.innerHTML = text;
   return element;
+}
+
+function getImageElement(commantId)
+{
+    var img = document.createElement("img");
+    
+
+    switch(commantId)
+    {
+        case "screenshot": 
+            img.src = "img/screenshot.png";
+            break;
+
+        case "click":
+            img.src = "img/click.png";
+            break;
+
+        case "keyboard":
+            img.src = "img/keyboard.png";
+            break;
+
+        case "newtab":
+            img.src = "img/newtab.png";
+            break;
+    }
+
+    img.width = 30;
+    img.height = 30;
+
+    return img;
 }

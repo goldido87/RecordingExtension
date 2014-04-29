@@ -22,7 +22,7 @@ function DB_save(callback) {
 
 function saveData(id, value)
 {
-  ExtensionData.commands.push({id: "ScreenShot", name: value});
+  ExtensionData.commands.push({id: id, name: value});
   DB_save();
 }
 
@@ -57,7 +57,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 chrome.tabs.onCreated.addListener(function(tab) {
-  saveData("new tab", "url: " + tab.url + " status: " + tab.status);
+  saveData("newtab", "url: " + tab.url + " status: " + tab.status);
 });
 
 /*chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
