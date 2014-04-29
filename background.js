@@ -24,17 +24,17 @@ function DB_save(callback) {
  // EVENTS //
 ////////////
 
-chrome.commands.onCommand.addListener(function(command) {
-		if (command == "screenshot")
-		{
-			alert("got command");
-	   		chrome.tabs.captureVisibleTab(
-		      function(dataUrl) 
-		      {
-			  	ExtensionData.commands.push({id: "ScreenShot", name: dataUrl});
-    			DB_save();
-			});
-	   	}
+chrome.commands.onCommand.addListener(function(command) 
+{
+	if (command == "screenshot")
+	{
+		alert("got command");
+   	chrome.tabs.captureVisibleTab(function(dataUrl) 
+	  {
+		  ExtensionData.commands.push({id: "ScreenShot", name: dataUrl});
+  		DB_save();
+		});
+  }
 });
 
 

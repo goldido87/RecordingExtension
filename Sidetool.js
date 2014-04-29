@@ -4,14 +4,6 @@ var ExtensionData = {
   commands: []
 };
 
-
-//default data
-/*ExtensionData.commands.push(
-    {id: "1325848", name: "village1"},
-    {id: "8744351", name: "village2"},
-    {id: "8952187", name: "village3"}
-);*/
-
 function DB_load(callback) {
     chrome.storage.local.get(ExtensionDataName, function(r) {
         if (isEmpty(r[ExtensionDataName])) {
@@ -60,16 +52,9 @@ function isEmpty(obj) {
 
 $("document").ready(function() 
 {
-    DB_load(function() {
-        //YOUR MAIN CODE WILL BE HERE
-        //alert(ExtensionData);
-        /*console.log(ExtensionData.commands); //array of villages
-        console.log(ExtensionData.commands[0]); //first village object
-        console.log(ExtensionData.commands[0].id); //first village id
-        console.log(ExtensionData.commands[0].name); //first village name*/
-       
-
-        //HOW TO ITERATE commands
+    // Load data on page load
+    DB_load(function() 
+    {
         var list = document.getElementById('photosList');
 
         for (var i = 0; i < ExtensionData.commands.length; i++) 
