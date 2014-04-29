@@ -84,8 +84,7 @@ $("document").ready(function()
 function clear()
 {
     DB_clear();
-    var list = document.getElementById('photosList');
-    list.parentNode.removeChild(elem);
+    history.go(0);
 }
 
 
