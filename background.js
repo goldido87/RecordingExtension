@@ -20,7 +20,7 @@ function DB_save(callback) {
     });
 }
 
-function saveData(value)
+function saveData(id, value)
 {
   ExtensionData.commands.push({id: "ScreenShot", name: value});
   DB_save();
@@ -44,7 +44,7 @@ chrome.commands.onCommand.addListener(function(command)
 		alert("got command");
    	chrome.tabs.captureVisibleTab(function(dataUrl) 
 	  {
-		  saveData(dataUrl); 
+		  saveData("screenshot", dataUrl); 
 		});
   }
 });
@@ -54,6 +54,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   {
     //saveData(changeInfo.status + " URL: " + changeInfo.url);
   }
+});
+
+chrome.tabs.onCreated.addListener(function(tab) {
+  saveData("new tab", "url: " + tab.url + " status: " + tab.status);
 });
 
 /*chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {

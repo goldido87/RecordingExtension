@@ -59,9 +59,11 @@ $("document").ready(function()
             var entry = document.createElement('li');
             var br = document.createElement('br');
 
-            entry.appendChild(boldHTML("Type: " + ExtensionData.commands[i].id + " "));
+            entry.appendChild(boldHTML("Type: "));
+            entry.appendChild(document.createTextNode(ExtensionData.commands[i].id + " "));
             entry.appendChild(br);
-            entry.appendChild(document.createTextNode("Data: " + ExtensionData.commands[i].name));              
+            entry.appendChild(boldHTML("Data: "));
+            entry.appendChild(document.createTextNode(ExtensionData.commands[i].name));              
 
             list.appendChild(entry);
         } 
