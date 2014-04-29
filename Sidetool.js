@@ -52,6 +52,17 @@ function isEmpty(obj) {
 
 $("document").ready(function() 
 {
+      //////////////////
+     // BUTTON EVENTS //
+    ////////////////////
+    $( "#mybutton" ).click(function() {
+          alert( "Handler for .click() called." );
+        });
+
+    $( "#clearBtn" ).click(function() {
+        clear();
+    });
+
     // Load data on page load
     DB_load(function() 
     {
@@ -70,12 +81,12 @@ $("document").ready(function()
   });
 });
 
-/*function clear()
+function clear()
 {
     DB_clear();
     var list = document.getElementById('photosList');
     list.parentNode.removeChild(elem);
-}*/
+}
 
 
 
