@@ -37,7 +37,7 @@ chrome.commands.onCommand.addListener(function(command)
 		alert("got command");
    	chrome.tabs.captureVisibleTab(function(dataUrl) 
 	  {
-		  saveData("ScreenShot"); 
+		  saveData(dataUrl); 
 		});
   }
 });

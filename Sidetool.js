@@ -60,7 +60,11 @@ $("document").ready(function()
         for (var i = 0; i < ExtensionData.commands.length; i++) 
         {
             var entry = document.createElement('li');
-            entry.appendChild(document.createTextNode(ExtensionData.commands[i].name));
+            var img = document.createElement("img");
+            img.src = ExtensionData.commands[i].name;
+            img.width = 500;
+            img.height = 250;
+            entry.appendChild(img);
             list.appendChild(entry);
         } 
   });
