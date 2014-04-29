@@ -1,12 +1,30 @@
 <html>
-<head>
-  <script src="jquery-2.1.0.min.js"></script>
-  <script src="Sidetool.js"></script>
-</head>
-<body style="width: 400px">
-  <div id="screenshotsContainer">
-  	<ul id="photosList">
-  	</ul>
-  </div>
-</body>
+	<head>
+	  	<script src="jquery-2.1.0.min.js"></script>
+	  	<script src="Sidetool.js"></script>
+	</head>
+
+	<body style="width: 400px">
+		<div>
+			<input type="image" src="play.png" name="playBtn" width="60" height="60">
+			<input type="image" src="stop.png" name="stopBtn" width="60" height="60">
+			<input type="image" id="clearBtn" src="clear.png" name="clearBtn" width="60" height="60">
+		</div>
+
+	  	<div id="screenshotsContainer">
+	  		<ul id="photosList">
+	  		</ul>
+	  	</div>
+
+	</body>
+
+	<button id="mybutton">click me</button>
+	<script>
+    
+    var button = document.getElementById("mybutton");
+    button.addEventListener("click", function() {
+      console.log("1111111");
+    }, false);
+
+  </script>
 </html>
