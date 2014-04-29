@@ -12,8 +12,10 @@ var ExtensionData = {
 };
 
 
-DB_load(function() { 
-    var TrackMouse = function (mouseEvent) {
+DB_load(function() 
+{ 
+    var TrackMouse = function (mouseEvent)
+    {
         eventProperty[eventCount++] = {
             id: mouseEvent.toElement.id,
             type: 'mouse',
@@ -22,12 +24,33 @@ DB_load(function() {
             y: mouseEvent.y
         };
 
-        var message = "Element id: " + eventProperty[eventCount - 1].id + 
-        ", X: " + mouseEvent.x + ", Y: " + mouseEvent.y + "\n"
+        // This condition let us catch only click events
+        // that were made on actual page elements
+        if (eventProperty[eventCount - 1].id.length > 1)
+        {
+            var message = "Element id: " + eventProperty[eventCount - 1].id + 
+                ", X: " + mouseEvent.x + ", Y: " + mouseEvent.y + "\n"
 
-        saveData("click", message);
+            saveData("click", message);
+        }
     }
 
+    function KeyPressed(e)
+    {
+        var key = ( window.event ) ? event.keyCode : e.keyCode;
+         
+        switch( key )
+        {
+          case 16:
+            alert( "Shift!" );
+        }
+
+        saveData("keyboard", "key number " + key);
+    }
+
+    // Listen to keyboard events
+    document.onkeyup = KeyPressed;
+    // Listen to mouse click events
     document.addEventListener('click', TrackMouse);
 
 });
