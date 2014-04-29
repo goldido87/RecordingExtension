@@ -7,7 +7,7 @@ var ExtensionData = {
 function DB_setValue(name, value, callback) {
     var obj = {};
     obj[name] = value;
-    alert("Data Saved!");
+    //alert("Data Saved!");
     chrome.storage.local.set(obj, function() {
         if(callback) callback();
     });
@@ -17,6 +17,12 @@ function DB_save(callback) {
     DB_setValue(ExtensionDataName, ExtensionData, function() {
         if(callback) callback();
     });
+}
+
+function saveData(value)
+{
+  ExtensionData.commands.push({id: "ScreenShot", name: value});
+  DB_save();
 }
 
 
@@ -31,10 +37,15 @@ chrome.commands.onCommand.addListener(function(command)
 		alert("got command");
    	chrome.tabs.captureVisibleTab(function(dataUrl) 
 	  {
-		  ExtensionData.commands.push({id: "ScreenShot", name: dataUrl});
-  		DB_save();
+		  saveData("ScreenShot"); 
 		});
   }
 });
 
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+  if (changeInfo.url != undefined)
+  {
+    saveData(changeInfo.status + " URL: " + changeInfo.url);
+  }
+});
 
