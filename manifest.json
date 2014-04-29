@@ -1,0 +1,28 @@
+{
+  "name": "ScreenShotJS",
+  "description": "",
+  "version": "1.0",
+  "manifest_version": 2,
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [{
+    "js": ["Sidetool.js"],
+     "matches": ["*://*/*"]
+  }],
+
+  "permissions": ["tabs", "pageCapture","activeTab","storage"],
+
+  "browser_action": {
+      "default_title": "Sidetool",
+      "default_icon": "icon.png",
+      "default_popup": "Sidetool.html"
+  },
+
+  "commands": {
+    "screenshot" : {
+    "suggested_key" :  { "default" : "Alt+S" },
+    "description" : " Take a screenshot"
+   }
+  }
+}
