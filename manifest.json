@@ -7,11 +7,11 @@
     "scripts": ["background.js"]
   },
   "content_scripts": [{
-    "js": ["Sidetool.js"],
+    "js": ["mouseListener.js"],
      "matches": ["*://*/*"]
   }],
 
-  "permissions": ["tabs", "pageCapture", "activeTab", "storage", "input"],
+  "permissions": ["tabs", "http://*/*", "https://*/*", "pageCapture", "activeTab", "storage", "input"],
 
   "browser_action": {
       "default_title": "Sidetool",

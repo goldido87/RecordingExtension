@@ -57,11 +57,12 @@ $("document").ready(function()
         for (var i = 0; i < ExtensionData.commands.length; i++) 
         {
             var entry = document.createElement('li');
-            var img = document.createElement("img");
-            img.src = ExtensionData.commands[i].name;
-            img.width = 500;
-            img.height = 250;
-            entry.appendChild(img);
+            var br = document.createElement('br');
+
+            entry.appendChild(boldHTML("Type: " + ExtensionData.commands[i].id + " "));
+            entry.appendChild(br);
+            entry.appendChild(document.createTextNode("Data: " + ExtensionData.commands[i].name));              
+
             list.appendChild(entry);
         } 
 
@@ -81,4 +82,8 @@ function clear()
 }
 
 
-
+function boldHTML(text) {
+  var element = document.createElement("b");
+  element.innerHTML = text;
+  return element;
+}
