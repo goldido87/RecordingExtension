@@ -12,8 +12,8 @@ var ExtensionData = {
 };
 
 function scrollFunction(mouseEvent) {
-    console.log(mouseEvent);
-   // saveData("scroll", "some msg");
+    //alert(mouseEvent);
+    saveData("scroll", "X: " + window.pageXOffset + " Y: " + window.pageYOffset);
 }
 
 
@@ -31,7 +31,7 @@ DB_load(function()
 
         // This condition let us catch only click events
         // that were made on actual page elements
-        if (eventProperty[eventCount - 1].id.length > 1)
+        if (eventProperty[eventCount - 1].id.length > 0)
         {
             var message = "Element id: " + eventProperty[eventCount - 1].id + 
                 ", X: " + mouseEvent.x + ", Y: " + mouseEvent.y + "\n"

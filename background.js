@@ -5,6 +5,19 @@ var ExtensionData = {
   commands: []
 };
 
+function DB_load(callback) {
+    chrome.storage.local.get(ExtensionDataName, function(r) {
+        if (isEmpty(r[ExtensionDataName])) {
+            DB_setValue(ExtensionDataName, ExtensionData, callback);
+        } else if (r[ExtensionDataName].dataVersion != ExtensionData.dataVersion) {
+            DB_setValue(ExtensionDataName, ExtensionData, callback);
+        } else {
+            ExtensionData = r[ExtensionDataName];
+            callback();
+        }
+    });
+}
+
 function DB_setValue(name, value, callback) {
     var obj = {};
     obj[name] = value;
@@ -35,13 +48,10 @@ document.addEventListener('click', function(event) {
 });
 
 
-
-
 chrome.commands.onCommand.addListener(function(command) 
 {
 	if (command == "screenshot")
 	{
-		alert("got command");
    	chrome.tabs.captureVisibleTab(function(dataUrl) 
 	  {
 		  saveData("screenshot", dataUrl); 
@@ -66,3 +76,8 @@ chrome.tabs.onCreated.addListener(function(tab) {
       
   });
 });*/
+
+window.onload = function ()
+{
+  DB_load();
+}

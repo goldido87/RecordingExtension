@@ -17,6 +17,16 @@ function DB_load(callback) {
     });
 }
 
+function DB_setValue(name, value, callback) {
+    var obj = {};
+    obj[name] = value;
+    //alert("Data Saved!");
+    chrome.storage.local.set(obj, function() {
+        if(callback) callback();
+    });
+}
+
+
 function DB_clear(callback) {
     chrome.storage.local.remove(ExtensionDataName, function() {
         if(callback) callback();
@@ -114,6 +124,10 @@ function getImageElement(commantId)
 
         case "newtab":
             img.src = "img/newtab.png";
+            break;
+
+        case "scroll":
+            img.src = "img/scroll.png";
             break;
     }
 
