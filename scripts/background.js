@@ -1,5 +1,8 @@
+
+// Storage data name
 var ExtensionDataName = "persistentData";
 
+// Holds the application commands
 var ExtensionData = {
   dataVersion: 3, //if you want to set a new default data, you must update "dataVersion".
   commands: []
@@ -16,6 +19,20 @@ function DB_load(callback) {
             callback();
         }
     });
+}
+
+function DB_clear(callback) {
+    chrome.storage.local.remove(ExtensionDataName, function() {
+        if(callback) callback();
+    });
+}
+
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+    return true;
 }
 
 function DB_setValue(name, value, callback) {
@@ -47,7 +64,6 @@ document.addEventListener('click', function(event) {
   console.log("click " + event );
 });
 
-
 chrome.commands.onCommand.addListener(function(command) 
 {
 	if (command == "screenshot")
@@ -59,23 +75,9 @@ chrome.commands.onCommand.addListener(function(command)
   }
 });
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  if (changeInfo.url != undefined)
-  {
-    //saveData(changeInfo.status + " URL: " + changeInfo.url);
-  }
-});
-
 chrome.tabs.onCreated.addListener(function(tab) {
   saveData("newtab", "url: " + tab.url + " status: " + tab.status);
 });
-
-/*chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-    //alert("executeScript");
-    chrome.tabs.executeScript(null, {code:
-      
-  });
-});*/
 
 window.onload = function ()
 {
