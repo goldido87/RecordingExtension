@@ -11,6 +11,11 @@ var ExtensionData = {
   commands: []
 };
 
+function scrollFunction(mouseEvent) {
+    console.log(mouseEvent);
+   // saveData("scroll", "some msg");
+}
+
 
 DB_load(function() 
 { 
@@ -52,8 +57,11 @@ DB_load(function()
     document.onkeyup = KeyPressed;
     // Listen to mouse click events
     document.addEventListener('click', TrackMouse);
-
+    // window.onscroll = scrollFunction;
+    window.addEventListener('scroll',scrollFunction);
 });
+
+
 
 function DB_load(callback) {
     chrome.storage.local.get(ExtensionDataName, function(r) {
