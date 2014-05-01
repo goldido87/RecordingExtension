@@ -67,10 +67,10 @@ $("document").ready(function()
         {
             // commands saved while not recording
             // have no importance
-            /*if (ExtensionData.commands.length > 0)
+            if (ExtensionData.commands.length > 0)
             {
                 clearCommands();
-            }*/
+            }
         }
   });
 });
