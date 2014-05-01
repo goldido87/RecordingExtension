@@ -3,11 +3,13 @@
 // Loads storage handling functions
 
 // Events currently saved: 
+// ----------------------
 // * mouse clicks 
 // * keyboard types
 // * scrolling
 // * Alt + S takes a photo
-
+// * new tab opens
+// ----------------------
 
   /////////////
  // STORAGE //
@@ -69,10 +71,13 @@ function DB_save(callback) {
 
 function saveData(id, value)
 {
-  DB_load(function() {
-    ExtensionData.commands.push({id: id, name: value});
-    DB_save();  
-  });
+    DB_load(function() {
+        if (ExtensionData.isRecording)
+        {
+            ExtensionData.commands.push({id: id, name: value});
+            DB_save();
+        }  
+    });
 }
 
   ////////////
