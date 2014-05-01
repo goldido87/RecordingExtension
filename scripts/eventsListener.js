@@ -108,11 +108,11 @@ DB_load(function()
     }
 
     // Listen to keyboard events
-    document.onkeyup = KeyPressed;
+    document.onkeyup = keyPressed;
     // Listen to mouse click events
-    document.addEventListener('click', TrackMouse);
-    document.addEventListener('contextmenu',rightClickEvent);
-    // window.onscroll = scrollFunction;
+    document.addEventListener('click', TrackMouse); //left click
+    document.addEventListener('contextmenu',rightClickEvent);   //right click
+    //Listen to scroll document 
     window.addEventListener('scroll',scrollFunction);
 
 });
@@ -129,7 +129,7 @@ function rightClickEvent(mouseEvent)
     console.log("right click" +  "X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
 }
 
-function KeyPressed(e)
+function keyPressed(e)
 {
     var key = ( window.event ) ? event.keyCode : e.keyCode;
      
