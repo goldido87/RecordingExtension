@@ -111,13 +111,22 @@ DB_load(function()
     document.onkeyup = KeyPressed;
     // Listen to mouse click events
     document.addEventListener('click', TrackMouse);
+    document.addEventListener('contextmenu',rightClickEvent);
     // window.onscroll = scrollFunction;
     window.addEventListener('scroll',scrollFunction);
+
 });
 
 function scrollFunction(mouseEvent) {
     //alert(mouseEvent);
     saveData("scroll", "X: " + window.pageXOffset + " Y: " + window.pageYOffset);
+}
+
+
+function rightClickEvent(mouseEvent) 
+{
+    saveData("contextmenu","X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
+    console.log("right click" +  "X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
 }
 
 function KeyPressed(e)
