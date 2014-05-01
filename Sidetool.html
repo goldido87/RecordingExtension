@@ -3,17 +3,19 @@
 	  	<script src="scripts/jquery-2.1.0.min.js"></script>
 	  	<script src="scripts/storage.js"></script>
 	  	<script src="scripts/Sidetool.js"></script>
+	  	<script src="scripts/Timer.js"></script>
 
 	  	<link rel="stylesheet" type="text/css" href="css/style.css">
 	</head>
 
-	<body style="width: 400px" "float: left;">
-		<div>
-			<input type="image" src="img/play.png"  id="recordingBtn" name="recordingBtn" width="60" height="60">
-			<input type="image" src="img/clear.png" id="clearBtn" name="clearBtn" width="60" height="60">
+	<body>
+		<div id="controls">
+			<input type="image" src="img/play.png"  id="recordingBtn" name="recordingBtn" width="50" height="50">
+			<input type="image" src="img/clear.png" id="clearBtn" name="clearBtn" width="50" height="50">
+			<div id="timer" width="50" height="50"/>
 		</div>
 		
-	  	<div style="overflow:auto;" id="screenshotsContainer">
+	  	<div id="screenshotsContainer">
 	  		<ul id="photosList">
 	  		</ul>
 	  	</div>

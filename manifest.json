@@ -13,6 +13,8 @@
 
   "permissions": ["tabs", "http://*/*", "https://*/*", "pageCapture", "activeTab", "storage", "input"],
 
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+
   "browser_action": {
       "default_title": "Sidetool",
       "default_icon": "img//icon.png",

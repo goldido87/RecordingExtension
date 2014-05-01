@@ -9,6 +9,8 @@ var ExtensionData = {
   commands: []
 };
 
+var serverURL = "";
+
 var playImage = "img/play.png";
 var stopImage = "img/stop.png";
 
@@ -46,22 +48,22 @@ $("document").ready(function()
             for (var i = 0; i < ExtensionData.commands.length; i++) 
             {
                 var entry = document.createElement('li');
-                var br = document.createElement('br');
+                //var br = document.createElement('br');
 
                 entry.appendChild(getImageElement(ExtensionData.commands[i].id));
-                entry.appendChild(br);
+                /*entry.appendChild(br);
                 entry.appendChild(boldHTML("Type: "));
                 entry.appendChild(document.createTextNode(ExtensionData.commands[i].id + " "));
                 br = document.createElement('br');
                 entry.appendChild(br);
                 entry.appendChild(boldHTML("Data: "));
                 entry.appendChild(document.createTextNode(ExtensionData.commands[i].name));              
-
+*/
                 list.appendChild(entry);
             } 
 
-            // Add seperating line after every list item
-            jQuery("ul li").append("<hr size='3' style='color:#333;background-color:#333;' />");
+            // Start counting time
+            CreateTimer("timer", 0);
         }
         else
         {
@@ -71,6 +73,9 @@ $("document").ready(function()
             {
                 clearCommands();
             }
+
+            Timer = document.getElementById("timer");
+            Timer.innerHTML = "00:00:00"; 
         }
   });
 });
@@ -109,8 +114,8 @@ function getImageElement(commantId)
             break;
     }
 
-    img.width = 30;
-    img.height = 30;
+    img.width = 40;
+    img.height = 40;
 
     return img;
 }
@@ -133,6 +138,7 @@ function recordingButtonPressed()
     DB_save(function() {
         if (!ExtensionData.isRecording)
         {
+            //postCommandsToServer();
             exportCommands();
             clearCommands();
         }
@@ -164,3 +170,50 @@ function exportCommands()
 
     alert(message);
 }
+
+function postCommandsToServer()
+{
+    for (var i = 0; i < ExtensionData.commands.length; i++) 
+    {
+        postCommand(ExtensionData.commands[i]);
+    }
+}
+
+function postCommand(command)
+{
+    // Define the data packet that we are going to post to the
+    // server. This will be "stringified" as a JSON value.
+    var postData = {
+        key_command: command.id,
+        name: command.name
+    };
+
+    // Post the data to the server as the HTTP Request Body.
+    // To do this, we have to stringify the postData value
+    // and pass it in a string value (so that jQuery won't try
+    // to process it as a query string).
+    var ajaxResponse = $.ajax({
+        type: "post",
+        url: serverURL,
+        contentType: "application/json",
+        data: JSON.stringify( postData )
+    })
+
+    // When the response comes back, output the HTML.
+    ajaxResponse.then(
+        function( apiResponse ){
+
+            // Dump HTML to page for debugging.
+            $( "#response" ).html( apiResponse );
+
+        }
+    );
+}
+
+        
+ 
+ 
+        
+ 
+ 
+        
