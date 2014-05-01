@@ -44,6 +44,6 @@ function DB_save(callback) {
 
 function saveData(id, value)
 {
-  ExtensionData.commands.push({id: id, name: value});
+  ExtensionData.commands.push({id: id, name: value, time: new Date().getMilliseconds()});
   DB_save();
 }

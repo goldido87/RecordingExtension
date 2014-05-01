@@ -4,7 +4,7 @@ var ExtensionDataName = "persistentData";
 
 // Holds the application commands
 var ExtensionData = {
-  dataVersion: 3,
+  dataVersion: 4,
   isRecording: false,
   commands: []
 };
@@ -165,7 +165,8 @@ function exportCommands()
     {
         message += ("#" + (i + 1) + " ");
         message += ("Type: " + ExtensionData.commands[i].id + "\n");
-        message += ("Data: " + ExtensionData.commands[i].name + "\n\n");
+        message += ("Data: " + ExtensionData.commands[i].name + "\n");
+        message += ("Time: " + new Date(ExtensionData.commands[i].time).toString() + "\n\n");
     }
 
     alert(message);
@@ -185,7 +186,8 @@ function postCommand(command)
     // server. This will be "stringified" as a JSON value.
     var postData = {
         key_command: command.id,
-        name: command.name
+        name: command.name,
+        time: command.time
     };
 
     // Post the data to the server as the HTTP Request Body.
@@ -202,10 +204,8 @@ function postCommand(command)
     // When the response comes back, output the HTML.
     ajaxResponse.then(
         function( apiResponse ){
-
             // Dump HTML to page for debugging.
             $( "#response" ).html( apiResponse );
-
         }
     );
 }

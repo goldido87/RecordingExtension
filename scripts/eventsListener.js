@@ -22,7 +22,7 @@ var ExtensionDataName = "persistentData";
 
 // Holds the application commands
 var ExtensionData = {
-  dataVersion: 3,
+  dataVersion: 4,
   isRecording: false,
   commands: []
 };
@@ -74,7 +74,7 @@ function saveData(id, value)
     DB_load(function() {
         if (ExtensionData.isRecording)
         {
-            ExtensionData.commands.push({id: id, name: value});
+            ExtensionData.commands.push({id: id, name: value, time: new Date().getMilliseconds()});
             DB_save();
         }  
     });
