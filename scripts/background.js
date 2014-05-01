@@ -72,9 +72,10 @@ chrome.commands.onCommand.addListener(function(command)
 {
 	if (command == "screenshot")
 	{
-   	chrome.tabs.captureVisibleTab(function(dataUrl) 
+   	chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT, { format: "jpeg" , quality: 8 }, function(dataUrl) 
 	  {
-		  saveData("screenshot", dataUrl); 
+		  saveData("screenshot", dataUrl);
+      console.log(dataUrl); 
 		});
   }
 });
