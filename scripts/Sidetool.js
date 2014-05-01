@@ -9,7 +9,7 @@ var ExtensionData = {
   commands: []
 };
 
-var serverURL = "";
+var serverAddress = "67.231.242.50";
 
 var playImage = "img/play.png";
 var stopImage = "img/stop.png";
@@ -196,7 +196,7 @@ function postCommand(command)
     // to process it as a query string).
     var ajaxResponse = $.ajax({
         type: "post",
-        url: serverURL,
+        url: serverAddress,
         contentType: "application/json",
         data: JSON.stringify( postData )
     })
