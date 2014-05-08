@@ -29,3 +29,24 @@ function getImageElement(commandId)
 
     return img;
 }
+
+function getListNameByEvent(commandId)
+{
+    switch(commandId)
+    {
+        case "screenshot": 
+            return "photosEventsList";
+
+        case "click":
+            return "mouseEventsList";
+
+        case "keyboard":
+            return "keyboardEventsList";
+
+        case "newtab":
+            return "mouseEventsList";
+
+        case "scroll":
+            return "mouseEventsList";
+    }
+}

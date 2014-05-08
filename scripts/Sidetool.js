@@ -1,7 +1,4 @@
 
-// Storage data name
-var ExtensionDataName = "persistentData";
-
 // Holds the application commands
 var ExtensionData = {
   dataVersion: 4,
@@ -38,7 +35,7 @@ $("document").ready(function()
     // Init list after sotrage load callback
     DB_load(function() 
     {
-        changeRecordingButtonImage();
+        evaluateRecordingButtonState();
 
         if (ExtensionData.isRecording)
         {
@@ -104,7 +101,7 @@ function clearCommands()
 function recordingButtonPressed()
 {
     ExtensionData.isRecording = !ExtensionData.isRecording;
-    changeRecordingButtonImage();
+    evaluateRecordingButtonState();
 
     DB_save(function() {
         if (!ExtensionData.isRecording)
@@ -116,7 +113,7 @@ function recordingButtonPressed()
     });
 }
 
-function changeRecordingButtonImage()
+function evaluateRecordingButtonState()
 {
     if (ExtensionData.isRecording)
     {
