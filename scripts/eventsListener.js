@@ -133,11 +133,11 @@ function keyPressed(e)
 {
     var key = ( window.event ) ? event.keyCode : e.keyCode;
      
-    switch( key )
+    /*switch( key )
     {
       case 16:
         //alert( "Shift Key!" );
-    }
+    }*/
 
     saveData("keyboard", "key number " + key);
 }

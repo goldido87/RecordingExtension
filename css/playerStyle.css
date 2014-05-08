@@ -1,0 +1,95 @@
+
+#player
+{
+	height: 380px;
+	border-style: solid;
+	border-color: black;
+	border-width: 1px;
+	background-color: black;
+	padding:5px 20px; 
+	border-radius:25px;
+	margin-top: 10px;
+}
+
+
+#mainImage
+{
+	height: 380px;
+	margin-left: 175px;
+}
+
+#timeline
+{
+	height: 200px;
+
+	background-color: black;
+	
+	margin-top: 20px;
+}
+
+p
+{
+	color: white;
+	
+	font-weight: bold;
+	height: 10px;
+	margin-left: 100px;
+	margin-top: 5px;
+}
+
+
+#timeline_mouseEvents
+{	
+	height: 50px;
+	border-style: solid;
+	border-color: #053a3f;
+	
+	border-width: 2px;
+	background-color: #CE6405;
+	margin-top: 10px;
+
+	overflow: hidden;
+}
+
+#timeline_sound, #timeline_hotspot, #timeline_note
+{	
+	height: 40px;
+	border-style: solid;
+	border-color: #053a3f;
+	background-color: #051D3F;
+	border-width: 2px;
+}
+
+
+#mouseEventsList
+{
+	margin-top: 8px;
+}
+
+li
+{
+	border-style:solid;
+
+	float: left;
+
+	margin-right: 30px;
+	width: 20px;
+	height: 20px;
+
+	border-width:2px;
+	border-color: #051D3F;
+	padding:5px 10px; 
+	border-radius:100px;
+}
+
+p {
+    /*CSS reset*/
+    margin-bottom: 0;
+}
+
+/* Changes the bullet before each list item with a picture */
+/*ul#mouseEventsList {
+    list-style-image: url('http://www.techforluddites.com/images/leaf_icon.jpg');
+}*/
+
+
