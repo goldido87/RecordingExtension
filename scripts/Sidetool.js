@@ -42,6 +42,7 @@ $("document").ready(function()
 
         if (ExtensionData.isRecording)
         {
+
             var list = document.getElementById('photosList');
 
             // Append loaded commands to list
@@ -50,6 +51,7 @@ $("document").ready(function()
                 var entry = document.createElement('li');
                 //var br = document.createElement('br');
                 var image = getImageElement(ExtensionData.commands[i].id);
+
                 image.width = 40;
                 image.height = 40;
 

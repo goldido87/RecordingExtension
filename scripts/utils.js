@@ -1,10 +1,10 @@
 
-function getImageElement(commantId)
+function getImageElement(commandId)
 {
     var img = document.createElement("img");
     
 
-    switch(commantId)
+    switch(commandId)
     {
         case "screenshot": 
             img.src = "img/screenshot.png";
@@ -26,6 +26,6 @@ function getImageElement(commantId)
             img.src = "img/scroll.png";
             break;
     }
-    
+
     return img;
 }
