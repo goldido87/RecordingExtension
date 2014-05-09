@@ -88,3 +88,21 @@ window.onload = function ()
 {
   DB_load();
 }
+
+// Listen for messages from content script
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    var script = request.detail;
+    alert(script);
+
+    if (request.type == "startSimulation")
+    {
+      chrome.tabs.create({ url: request.url, active: false }, function(tab) 
+      {    
+        chrome.tabs.update(tab.id, { active:true });
+
+        // Inject script to url
+        chrome.tabs.executeScript( tab.id, {code: script} );
+      });  
+    }
+});

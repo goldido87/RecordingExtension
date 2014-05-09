@@ -100,8 +100,7 @@ DB_load(function()
         // that were made on actual page elements
         if (eventProperty[eventCount - 1].id.length > 0)
         {
-            var message = "Element id: " + eventProperty[eventCount - 1].id + 
-                ", X: " + mouseEvent.x + ", Y: " + mouseEvent.y + "\n"
+            var message = eventProperty[eventCount - 1].id;
 
             saveData("click", message);
         }
@@ -119,13 +118,13 @@ DB_load(function()
 
 function scrollFunction(mouseEvent) {
     //alert(mouseEvent);
-    saveData("scroll", "X: " + window.pageXOffset + " Y: " + window.pageYOffset);
+    saveData("scroll", window.pageXOffset + "," + window.pageYOffset);
 }
 
 
 function rightClickEvent(mouseEvent) 
 {
-    saveData("contextmenu","X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
+    saveData("rightclick","X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
     console.log("right click" +  "X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
 }
 
@@ -139,5 +138,5 @@ function keyPressed(e)
         //alert( "Shift Key!" );
     }*/
 
-    saveData("keyboard", "key number " + key);
+    saveData("keyboard", key);
 }
