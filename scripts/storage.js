@@ -1,4 +1,6 @@
 
+// Storage data name
+var ExtensionDataName = "persistentData";
 
 function DB_load(callback) {
     chrome.storage.local.get(ExtensionDataName, function(r) {

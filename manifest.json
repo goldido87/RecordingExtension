@@ -1,15 +1,11 @@
 {
   "name": "Action Recorder",
   "description": "",
-  "version": "1.0",
+  "version": "1.1",
   "manifest_version": 2,
   "background": {
     "scripts": ["scripts//background.js"]
   },
-  "content_scripts": [{
-    "js": ["scripts//eventsListener.js"],
-     "matches": ["*://*/*"]
-  }],
 
   "permissions": ["tabs", "http://*/*", "https://*/*", "pageCapture", "activeTab", "storage", "input"],
 

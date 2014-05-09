@@ -1,7 +1,7 @@
 
 #player
 {
-	height: 380px;
+	height: 1380px;
 	border-style: solid;
 	border-color: black;
 	border-width: 1px;
@@ -11,11 +11,10 @@
 	margin-top: 10px;
 }
 
-
-#mainImage
+iframe
 {
-	height: 380px;
-	margin-left: 175px;
+	height: 100%;
+    width: 100%;
 }
 
 #timeline

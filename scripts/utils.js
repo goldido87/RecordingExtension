@@ -6,6 +6,10 @@ function getImageElement(commandId)
 
     switch(commandId)
     {
+    	case "url":
+    		img.src = "img/internet.png";
+    		break;
+
         case "screenshot": 
             img.src = "img/screenshot.png";
             break;

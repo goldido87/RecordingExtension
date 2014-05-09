@@ -1,4 +1,7 @@
 
+// Storage data name
+var ExtensionDataName = "persistentData";
+
 // Holds the application commands
 var ExtensionData = {
   dataVersion: 4,
@@ -46,26 +49,19 @@ $("document").ready(function()
             for (var i = 0; i < ExtensionData.commands.length; i++) 
             {
                 var entry = document.createElement('li');
-                //var br = document.createElement('br');
+
                 var image = getImageElement(ExtensionData.commands[i].id);
 
                 image.width = 40;
                 image.height = 40;
 
                 entry.appendChild(image);
-                /*entry.appendChild(br);
-                entry.appendChild(boldHTML("Type: "));
-                entry.appendChild(document.createTextNode(ExtensionData.commands[i].id + " "));
-                br = document.createElement('br');
-                entry.appendChild(br);
-                entry.appendChild(boldHTML("Data: "));
-                entry.appendChild(document.createTextNode(ExtensionData.commands[i].name));              
-*/
+
                 list.appendChild(entry);
             } 
 
             // Start counting time
-            CreateTimer("timer", 0);
+            //CreateTimer("timer", 0);
         }
         else
         {
@@ -76,8 +72,8 @@ $("document").ready(function()
                 clearCommands();
             }
 
-            Timer = document.getElementById("timer");
-            Timer.innerHTML = "00:00:00"; 
+            //Timer = document.getElementById("timer");
+            //Timer.innerHTML = "00:00:00"; 
         }
   });
 });
@@ -86,16 +82,6 @@ function boldHTML(text) {
   var element = document.createElement("b");
   element.innerHTML = text;
   return element;
-}
-
-function clearCommands()
-{
-    // Clear persistent data
-    DB_clear();
-    // Clear cached array
-    ExtensionData.commands = [];
-    // Refresh page
-    history.go(0);
 }
 
 function recordingButtonPressed()
@@ -107,10 +93,37 @@ function recordingButtonPressed()
         if (!ExtensionData.isRecording)
         {
             //postCommandsToServer();
-            exportCommands();
-            clearCommands();
+            //exportCommands();
+            startSimulation();
+        }       
+        else
+        {   
+            // Recording started
+
+            startRecording();
         }
     });
+}
+
+function startRecording()
+{
+    // Inject to the current tab the script 
+    // that listens to all extension events
+    chrome.tabs.getSelected(null, function(tab) {
+      chrome.tabs.executeScript(tab.id, { file: "scripts/eventsListener.js" });
+      // Save the tab url
+      saveData("url", tab.url);
+    });
+}
+
+function clearCommands()
+{
+    // Clear persistent data
+    DB_clear();
+    // Clear cached array
+    ExtensionData.commands = [];
+    // Refresh page
+    history.go(0);
 }
 
 function evaluateRecordingButtonState()
@@ -125,6 +138,53 @@ function evaluateRecordingButtonState()
     }
 }
 
+function startSimulation()
+{
+    var script = "";
+
+    // The url when user started his recording
+    var startingUrl = ExtensionData.commands[0].name;
+
+    script += "alert('Executing Script');\n";
+    script += "document.body.style.backgroundColor = 'pink';" + "\n";
+
+    // Start from 1, first command is reserved for the page url
+    for (var i = 1; i < ExtensionData.commands.length; i++) 
+    {
+        var command = ExtensionData.commands[i]; 
+
+        // TODO: Add sleep of some time after every command
+
+        switch(command.id)
+        {
+            case "click":
+                script += "document.getElementById('" + command.name + "').click();";
+                break;
+
+            case "scroll":
+                var coords = command.name.split(",");
+                script += "window.scrollTo(" + coords[0] + "," + coords[1] + ");";
+                break;
+
+            case "keyboard":
+                script += "alert('Key pressed: " + command.name + "');";
+                break;
+        }
+
+        script += "\n";
+
+        // Pause between commands (pseudo code)
+        //script += "sleep(1000);\n";
+    }
+
+    // Clear all commands data before actual execution
+    clearCommands();
+
+    // Send a message to background.js to open
+    // the url and inject the script to start simulation
+    chrome.runtime.sendMessage({type: "startSimulation", detail: script , url: startingUrl});
+}
+
 function exportCommands()
 {
     var message = "Actions Summary:\n------------------\n\n";
@@ -134,7 +194,7 @@ function exportCommands()
         message += ("#" + (i + 1) + " ");
         message += ("Type: " + ExtensionData.commands[i].id + "\n");
         message += ("Data: " + ExtensionData.commands[i].name + "\n");
-        message += ("Time: " + new Date(ExtensionData.commands[i].time).toString() + "\n\n");
+        message += ("Time: " + new Date(ExtensionData.commands[i].time).getUTCFullYear() + "\n\n");
     }
 
     alert(message);
