@@ -2,12 +2,11 @@
 function getImageElement(commandId)
 {
     var img = document.createElement("img");
-    
 
     switch(commandId)
     {
     	case "url":
-    		img.src = "img/internet.png";
+    		img.src = "img/keyboard.png";
     		break;
 
         case "screenshot": 
@@ -16,6 +15,10 @@ function getImageElement(commandId)
 
         case "click":
             img.src = "img/click.png";
+            break;
+
+        case "rightclick":
+            img.src = "img/rightclick.png"
             break;
 
         case "keyboard":

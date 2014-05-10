@@ -1,6 +1,13 @@
 {
   "name": "Action Recorder",
   "description": "",
+  "icons": {
+    "16": "img/icon.png",
+    "48": "img/icon.png",
+    "128": "img/icon.png"
+  },
+  "devtools_page": "Devtools.html",
+  "options_page": "Sidetool.html",
   "version": "1.1",
   "manifest_version": 2,
   "background": {
@@ -9,14 +16,21 @@
 
   "permissions": ["tabs", "http://*/*", "https://*/*", "pageCapture", "activeTab", "storage", "input"],
 
+  "content_scripts": [
+    {
+      "matches": ["http://*/*","https://*/*"],
+      "js": [ "scripts/jquery-2.1.0.min.js", "scripts/jquery.scrollstop.js", "scripts/eventsListener.js"]
+    }
+  ],
+
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
-  "browser_action": {
+ /* "browser_action": {
       "default_title": "Sidetool",
       "default_icon": "img//icon.png",
       "default_popup": "Sidetool.html"
   },
-
+*/
   "commands": {
     "screenshot" : {
     "suggested_key" :  { "default" : "Alt+S" },

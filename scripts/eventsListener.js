@@ -111,13 +111,22 @@ DB_load(function()
     // Listen to mouse click events
     document.addEventListener('click', TrackMouse); //left click
     document.addEventListener('contextmenu',rightClickEvent);   //right click
-    //Listen to scroll document 
-    window.addEventListener('scroll',scrollFunction);
+    // Listen to scroll document 
+    //window.addEventListener('scroll',scrollFunction);
 
+    $(window)
+      /*.on("scrollstart", function() {
+        // Paint the world yellow when scrolling starts.
+        $(document.body).css({background: "yellow"});
+      })*/
+      .on("scrollstop", function() {
+        // Paint it all green when scrolling stops.
+        scrollFunction();
+      })
 });
 
-function scrollFunction(mouseEvent) {
-    //alert(mouseEvent);
+
+function scrollFunction() {
     saveData("scroll", window.pageXOffset + "," + window.pageYOffset);
 }
 
@@ -131,12 +140,6 @@ function rightClickEvent(mouseEvent)
 function keyPressed(e)
 {
     var key = ( window.event ) ? event.keyCode : e.keyCode;
-     
-    /*switch( key )
-    {
-      case 16:
-        //alert( "Shift Key!" );
-    }*/
-
+    
     saveData("keyboard", key);
 }
