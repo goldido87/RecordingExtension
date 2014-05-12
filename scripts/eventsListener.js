@@ -138,6 +138,34 @@ DB_load(function()
         saveData("click_a", action);
     });
 
+    $('input').click(function (event){ 
+
+        var prefix = "#";
+        var identification = $(this).attr('id');
+        var type = $(this).attr('type');
+
+        if (identification == undefined)
+        {
+            prefix = ".";
+            identification = $(this).attr('class');
+        }
+        if (identification != undefined)
+        {
+            if (type == "submit")
+            {
+                saveData("click_input_submit", prefix + identification);
+            }
+            else
+            {
+                saveData("click_input_text", prefix + identification);
+            }
+        }
+    });
+
+    $('input').focusout(function(){
+        saveData("focusout", "");
+    }); 
+
     // Listen to keyboard events
     document.onkeyup = keyPressed;
     // Listen to mouse click events
@@ -166,12 +194,12 @@ function scrollFunction() {
 function rightClickEvent(mouseEvent) 
 {
     saveData("rightclick","X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
-    console.log("right click" +  "X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
+    //console.log("right click" +  "X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
 }
 
 function keyPressed(e)
 {
     var key = ( window.event ) ? event.keyCode : e.keyCode;
     
-    saveData("keyboard", key);
+    saveData("keyboard", String.fromCharCode(key));
 }

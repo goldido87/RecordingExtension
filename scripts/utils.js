@@ -6,7 +6,7 @@ function getImageElement(commandId)
     switch(commandId)
     {
     	case "url":
-    		img.src = "img/keyboard.png";
+    		img.src = "img/play.png";
     		break;
 
         case "screenshot": 
@@ -15,6 +15,8 @@ function getImageElement(commandId)
 
         case "click":
         case "click_a":
+        case "click_input_text":
+        case "click_input_submit":
             img.src = "img/click.png";
             break;
 

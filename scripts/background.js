@@ -117,22 +117,18 @@ chrome.runtime.onConnect.addListener(function(port) {
     }
     else if (msg.type == "isRecording_Changed")
     {
-      if (msg.data == false)
-        ExtensionData.isRecording = false;  
-      else
-        ExtensionData.isRecording = !ExtensionData.isRecording;
-
+      ExtensionData.isRecording = msg.data;  
       DB_save();
     }
     else if (msg.type == "startRecording")
     {
       chrome.tabs.getSelected(null, function(tab) {
-        //chrome.tabs.executeScript(tab.id, { file: "scripts/eventsListener.js" });
+        // Save the tab url
+        saveData("url", tab.url);
         // Reload tab to make sure the content
         // script will be injected
         chrome.tabs.reload(tab.id);
-        // Save the tab url
-        saveData("url", tab.url);
+        
       });
     }
     else if (msg.type == "clearData")
