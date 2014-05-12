@@ -14,6 +14,7 @@ function getImageElement(commandId)
             break;
 
         case "click":
+        case "click_a":
             img.src = "img/click.png";
             break;
 

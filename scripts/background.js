@@ -117,7 +117,11 @@ chrome.runtime.onConnect.addListener(function(port) {
     }
     else if (msg.type == "isRecording_Changed")
     {
-      ExtensionData.isRecording = !ExtensionData.isRecording;
+      if (msg.data == false)
+        ExtensionData.isRecording = false;  
+      else
+        ExtensionData.isRecording = !ExtensionData.isRecording;
+
       DB_save();
     }
     else if (msg.type == "startRecording")

@@ -35,8 +35,8 @@ $("document").ready(function()
         });
 
     $( "#clearBtn" ).click(function() {
-        ExtensionData.isRecording = !ExtensionData.isRecording;
-        port.postMessage({type: "isRecording_Changed"});
+        ExtensionData.isRecording = false;
+        port.postMessage({type: "isRecording_Changed", data: false});
         clearCommands();
     });
 
@@ -186,7 +186,8 @@ function startSimulation()
     // The url when user started his recording
     var startingUrl = ExtensionData.commands[0].name;
 
-    script += "alert('Executing Script');\n";
+    script += "$('document').ready(function() {";
+    //script += "alert('Executing Script');\n";
     //script += "document.body.style.backgroundColor = 'pink';" + "\n";
 
     // Start from 1, first command is reserved for the page url
@@ -197,7 +198,11 @@ function startSimulation()
         switch(command.id)
         {
             case "click":
-                action = "document.getElementById('" + command.name + "').click();";
+                action = "$('" + command.name + "').trigger('click');";
+                break;
+
+            case "click_a":    
+                action = command.name;
                 break;
 
             case "scroll":
@@ -211,9 +216,12 @@ function startSimulation()
         }
 
         // Set timeout for each command
-        script += "window.setTimeout(function(){" + action +"}, 3000);";
+        script += action;
+        //script += "window.setTimeout(function(){" + action +"}, 3000);";
         script += "\n";
     }
+
+    script += "});";
 
     // Clear all commands data after prepering 
     // the script, before actual execution

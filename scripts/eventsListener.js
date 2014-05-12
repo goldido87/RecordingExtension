@@ -86,7 +86,7 @@ function saveData(id, value)
 
 DB_load(function() 
 { 
-    var TrackMouse = function (mouseEvent)
+    /*var TrackMouse = function (mouseEvent)
     {
         eventProperty[eventCount++] = {
             id: mouseEvent.toElement.id,
@@ -104,12 +104,44 @@ DB_load(function()
 
             saveData("click", message);
         }
-    }
+    }*/
+
+/*    $( "body" ).click(function( event ) {
+        
+        var prefix = "#";
+        var identification = $(this).attr('id');
+
+        if (identification == undefined)
+        {
+            prefix = ".";
+            identification = $(this).attr('class');
+        }
+        if (identification != undefined)
+            saveData("click", "btn:" + prefix + identification);
+    });*/
+
+    $('a').click(function (event){ 
+        var link = $(this);
+        var target = link.attr("target");
+        var href = link.attr("href");
+        var action = "";
+
+        if($.trim(target).length > 0)
+        {
+            action = "window.open('" + href + "'), " + target + ");";
+        }
+        else
+        {
+            action = "window.location = '" + href + "';";
+        }
+
+        saveData("click_a", action);
+    });
 
     // Listen to keyboard events
     document.onkeyup = keyPressed;
     // Listen to mouse click events
-    document.addEventListener('click', TrackMouse); //left click
+    //document.addEventListener('click', TrackMouse); //left click
     document.addEventListener('contextmenu',rightClickEvent);   //right click
     // Listen to scroll document 
     //window.addEventListener('scroll',scrollFunction);
