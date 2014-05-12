@@ -35,6 +35,15 @@ function getImageElement(commandId)
         case "scroll":
             img.src = "img/scroll.png";
             break;
+
+        case "refreshTab":
+            img.src = "img/refresh.png";
+            break;
+
+        case "newURLSearch":
+            img.src = "img/NewURLSearch.png";
+            break;
+
     }
 
     return img;

@@ -85,6 +85,18 @@ chrome.tabs.onCreated.addListener(function(tab) {
   saveData("newtab", "url: " + tab.url + " status: " + tab.status);
 });
 
+// //onUpdate tab state  - e.g: refresh, enter another address URL
+// chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
+ 
+
+//   console.log(changeInfo.url.indexOf("chrome-extension://"));
+//   console.log(changeInfo.url.indexOf("chrome://"));
+
+//  // if((changeInfo.status == "complete") && !changeInfo.url.startWith("chrome-extension://") || !changeInfo.url.startWith("chrome://"))
+//  //      saveData('refreshTab',"url: " + tab.url + " status: " + tab.status);
+
+// });
+
 window.onload = function()
 {
   DB_load();
