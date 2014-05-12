@@ -58,6 +58,7 @@ $("document").ready(function()
 
     port = chrome.runtime.connect({name: portName});
 
+    // Listen to messages from background.js
     port.onMessage.addListener(function(msg) {
         if (msg.type == "refreshData")
         {
@@ -77,9 +78,10 @@ $("document").ready(function()
         }
     });
 
+    // When the app is loaded, load all data
     port.postMessage({type: "load"});
 
-    // Refresh data every second
+    // Refresh data in interval
     setInterval(function()
     {
         if (ExtensionData.isRecording)
@@ -103,14 +105,12 @@ function init(startingIndex)
                 continue;
 
             var entry = document.createElement('li');
-
             var image = getImageElement(ExtensionData.commands[i].id);
 
             image.width = 40;
             image.height = 40;
 
             entry.appendChild(image);
-
             list.appendChild(entry);
         } 
 
@@ -135,23 +135,6 @@ function stopRecording()
 {
     ExtensionData.isRecording = false;
     port.postMessage({type: "isRecording_Changed", data: false});
-}
-
-function changeBackground(element)
-{
-    $("#playBtn").css('background-color', '#051D3F');
-    $("#stopBtn").css('background-color', '#051D3F');
-    $("#pauseBtn").css('background-color', '#051D3F');
-
-    $("#" + element).css('background-color', '#0C4B90');
-}
-
-// Converts a given text to an html 
-// bold text element 
-function boldHTML(text) {
-    var element = document.createElement("b");
-    element.innerHTML = text;
-    return element;
 }
 
 function startRecording()
@@ -212,6 +195,8 @@ function startSimulation()
                 action = command.name;
                 break;
 
+            // While inside a text box, we will
+            // save any keyboard keys pressed
             case "click_input_text":
                 action = "$('" + command.name + "').focus();"; 
                 InputData.isInInputField = true;
@@ -229,15 +214,19 @@ function startSimulation()
                     InputData.text += command.name;
                     action = "$('" + InputData.identification + "').val('" + InputData.text + "');";
                 }
-                else
+                /*else
                 {
                     action = "alert('Key pressed: " + command.name + "');";
-                }
+                }*/
                 break;
 
             case "focusout":
                 InputData.isInInputField = false;
                 InputData.text = "";
+                break;
+
+            case "screenshot":
+                action = "window.open('" + command.name + "');";
                 break;
         }
 
@@ -259,23 +248,6 @@ function startSimulation()
         // the url and inject the script to start simulation
         port.postMessage({type: "startSimulation", detail: script , url: startingUrl});
     }
-}
- 
-// Used for debugging, export all commands
-// and write to console log
-function exportCommands()
-{
-    var message = "Actions Summary:\n------------------\n\n";
-
-    for (var i = 0; i < ExtensionData.commands.length; i++) 
-    {
-        message += ("#" + (i + 1) + " ");
-        message += ("Type: " + ExtensionData.commands[i].id + "\n");
-        message += ("Data: " + ExtensionData.commands[i].name + "\n");
-        message += ("Time: " + new Date(ExtensionData.commands[i].time).getUTCFullYear() + "\n\n");
-    }
-
-    console.log(message);
 }
 
 function postCommandsToServer()

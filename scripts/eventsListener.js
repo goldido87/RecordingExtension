@@ -162,6 +162,22 @@ DB_load(function()
         }
     });
 
+    /*$('div').click(function (event){ 
+
+        var prefix = "#";
+        var identification = $(this).attr('id');
+
+        if (identification == undefined)
+        {
+            prefix = ".";
+            identification = $(this).attr('class');
+        }
+        if (identification != undefined)
+        {
+            saveData("click", prefix + identification);
+        }
+    });*/
+
     $('input').focusout(function(){
         saveData("focusout", "");
     }); 

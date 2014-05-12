@@ -73,7 +73,7 @@ chrome.commands.onCommand.addListener(function(command)
 	if (command == "screenshot")
 	{
    	chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT, 
-      { format: "jpeg" , quality: 8 }, function(dataUrl) 
+      { format: "jpeg" , quality: 10 }, function(dataUrl) 
 	  {
 		  saveData("screenshot", dataUrl);
       //console.log(dataUrl); 
@@ -116,7 +116,7 @@ chrome.runtime.onConnect.addListener(function(port) {
     else if (msg.type == "startSimulation")
     {
       var script = msg.detail;
-      alert(script);
+      //alert(script);
 
       chrome.tabs.create({ url: msg.url, active: false }, function(tab) 
       {    

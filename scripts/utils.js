@@ -69,3 +69,38 @@ function getListNameByEvent(commandId)
             return "mouseEventsList";
     }
 }
+
+function changeBackground(element)
+{
+    $("#playBtn").css('background-color', '#051D3F');
+    $("#stopBtn").css('background-color', '#051D3F');
+    $("#pauseBtn").css('background-color', '#051D3F');
+
+    $("#" + element).css('background-color', '#0C4B90');
+}
+
+// Converts a given text to an html 
+// bold text element 
+function boldHTML(text) 
+{
+    var element = document.createElement("b");
+    element.innerHTML = text;
+    return element;
+}
+
+// Used for debugging, export all commands
+// and write to console log
+function exportCommands()
+{
+    var message = "Actions Summary:\n------------------\n\n";
+
+    for (var i = 0; i < ExtensionData.commands.length; i++) 
+    {
+        message += ("#" + (i + 1) + " ");
+        message += ("Type: " + ExtensionData.commands[i].id + "\n");
+        message += ("Data: " + ExtensionData.commands[i].name + "\n");
+        message += ("Time: " + new Date(ExtensionData.commands[i].time).getUTCFullYear() + "\n\n");
+    }
+
+    console.log(message);
+}
