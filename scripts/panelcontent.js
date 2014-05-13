@@ -9,16 +9,14 @@ var ExtensionData = {
   commands: []
 };
 
-var serverAddress = "67.231.242.50";
-
-var playImage = "img/play.png";
-var stopImage = "img/stop.png";
-
+// Port used to communicate with background.js
 var port;
-
 var portName = "applicationPort";
 
-var refreshInterval = 700;
+// Interval for refreshing application data
+var refreshInterval = 1000;
+
+var serverAddress = "67.231.242.50";
 
 
   ////////////
@@ -30,30 +28,27 @@ $("document").ready(function()
       ////////////////////
      // BUTTON EVENTS ///
     ////////////////////
-    $( "#mybutton" ).click(function() {
-          alert( "Handler for .click() called." );
-        });
-
-    $( "#clearBtn" ).click(function() {
-        changeBackground($(this).attr('id'));
-        stopRecording();
-        clearCommands();
-    });
 
     $( "#playBtn" ).click(function() {
-        changeBackground($(this).attr('id'));
+        changeButtonBackground("playBtn");
         startRecording();
     });
 
     $( "#stopBtn" ).click(function() {
-        changeBackground($(this).attr('id'));
+        changeButtonBackground("stopBtn");
         stopRecording();
         startSimulation();
     });
 
     $( "#pauseBtn" ).click(function() {
-        changeBackground($(this).attr('id'));
+        changeButtonBackground("pauseBtn");
         stopRecording();
+    });
+
+    $( "#clearBtn" ).click(function() {
+        changeButtonBackground("clearBtn");
+        stopRecording();
+        clearCommands();
     });
 
     port = chrome.runtime.connect({name: portName});
@@ -64,8 +59,7 @@ $("document").ready(function()
         {
             var loadedCommands = ExtensionData.commands.length;
             ExtensionData = msg.data;   
-            // After getting the application data,
-            // initialize the GUI, send the number of 
+            // Initialize the GUI and send the number of 
             // commands already loaded so we won't have to
             // iterate and add all commands all over again
             if (ExtensionData.isRecording)
@@ -87,14 +81,19 @@ $("document").ready(function()
         if (ExtensionData.isRecording)
                 port.postMessage({type: "load"});
 
-    },refreshInterval);
+    }, refreshInterval);
     
 });
 
+// Initialize the list in the GUI
+// with available commands
 function init(startingIndex)
 {
     if (ExtensionData.isRecording)
     {
+        // When recording highlight the play btn
+        changeButtonBackground("playBtn");
+
         var list = document.getElementById('commandsList');
 
         // Append loaded commands to list
@@ -131,16 +130,19 @@ function init(startingIndex)
     }
   }
 
-function stopRecording()
+function stopRecording(isPaused)
 {
     ExtensionData.isRecording = false;
-    port.postMessage({type: "isRecording_Changed", data: false});
+
+    if (isPaused)
+        port.postMessage({type: "pauseRecording"});
+    else
+        port.postMessage({type: "stopRecording"});
 }
 
 function startRecording()
 {
     ExtensionData.isRecording = true;
-    port.postMessage({type: "isRecording_Changed", data: true});
     // Inject to the current tab the script 
     // that listens to all extension events
     port.postMessage({type: "startRecording"});
@@ -165,15 +167,20 @@ function startSimulation()
 
     var numOfCommands = ExtensionData.commands.length;
 
+    // For handling typing into text fields
     var InputData = {
+      // Indicates that we are in a text box
+      // to save upcoming keyboard commands
       isInInputField: false,
+      // Holds the id or class of the 
+      // text box that the user is typing into
       identification: "",
+      // Saves the text entered
       text: ""
     };
 
     script += "$('document').ready(function() {" + "\n";
 
-    // Start from 1, first command is reserved for the page url
     for (var i = 0; i < numOfCommands; i++) 
     {
         var command = ExtensionData.commands[i]; 
@@ -195,8 +202,6 @@ function startSimulation()
                 action = command.name;
                 break;
 
-            // While inside a text box, we will
-            // save any keyboard keys pressed
             case "click_input_text":
                 action = "$('" + command.name + "').focus();"; 
                 InputData.isInInputField = true;
@@ -230,8 +235,8 @@ function startSimulation()
                 break;
         }
 
-        // Set timeout for each command
         script += action;
+        // Set timeout for each command
         //script += "window.setTimeout(function(){" + action +"}, 3000);";
         script += "\n";
     }

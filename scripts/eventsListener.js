@@ -23,7 +23,7 @@ var ExtensionDataName = "persistentData";
 // Holds the application commands
 var ExtensionData = {
   dataVersion: 4,
-  isRecording: false,
+  appStatus: "stop",
   commands: []
 };
 
@@ -72,7 +72,7 @@ function DB_save(callback) {
 function saveData(id, value)
 {
     DB_load(function() {
-        if (ExtensionData.isRecording)
+        if (ExtensionData.appStatus == "play")
         {
             ExtensionData.commands.push({id: id, name: value, time: new Date().getMilliseconds()});
             DB_save();
@@ -86,26 +86,6 @@ function saveData(id, value)
 
 DB_load(function() 
 { 
-    /*var TrackMouse = function (mouseEvent)
-    {
-        eventProperty[eventCount++] = {
-            id: mouseEvent.toElement.id,
-            type: 'mouse',
-            ts: Date.now(),
-            x: mouseEvent.x,
-            y: mouseEvent.y
-        };
-
-        // This condition let us catch only click events
-        // that were made on actual page elements
-        if (eventProperty[eventCount - 1].id.length > 0)
-        {
-            var message = eventProperty[eventCount - 1].id;
-
-            saveData("click", message);
-        }
-    }*/
-
 /*    $( "body" ).click(function( event ) {
         
         var prefix = "#";
@@ -184,12 +164,11 @@ DB_load(function()
 
     // Listen to keyboard events
     document.onkeyup = keyPressed;
-    // Listen to mouse click events
-    //document.addEventListener('click', TrackMouse); //left click
-    document.addEventListener('contextmenu',rightClickEvent);   //right click
-    // Listen to scroll document 
-    //window.addEventListener('scroll',scrollFunction);
-
+    
+    // Listen to right click events
+    document.addEventListener('contextmenu',rightClickEvent); 
+    
+    // Listens to scroll stops events
     $(window)
       /*.on("scrollstart", function() {
         // Paint the world yellow when scrolling starts.
@@ -206,16 +185,12 @@ function scrollFunction() {
     saveData("scroll", window.pageXOffset + "," + window.pageYOffset);
 }
 
-
-function rightClickEvent(mouseEvent) 
-{
+function rightClickEvent(mouseEvent) {
     saveData("rightclick","X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
-    //console.log("right click" +  "X: " + mouseEvent.x + ", Y: " + mouseEvent.y);
 }
 
-function keyPressed(e)
-{
+function keyPressed(e) {
     var key = ( window.event ) ? event.keyCode : e.keyCode;
-    
+    // Format the key code to the actual char
     saveData("keyboard", String.fromCharCode(key));
 }

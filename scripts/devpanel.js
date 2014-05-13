@@ -2,7 +2,7 @@
 var panels = chrome.devtools.panels;
 
 var recordingPanel = panels.create(
-  "Action Recorder",
+  "ActionRecorder",
   "img/icon.png",
-  "Sidetool.html"
+  "panelcontent.html"
 );

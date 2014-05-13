@@ -70,7 +70,7 @@ function getListNameByEvent(commandId)
     }
 }
 
-function changeBackground(element)
+function changeButtonBackground(element)
 {
     $("#playBtn").css('background-color', '#051D3F');
     $("#stopBtn").css('background-color', '#051D3F');

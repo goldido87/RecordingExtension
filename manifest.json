@@ -6,8 +6,8 @@
     "48": "img/icon.png",
     "128": "img/icon.png"
   },
-  "devtools_page": "Devtools.html",
-  "options_page": "Sidetool.html",
+  "devtools_page": "devpanel.html",
+  "options_page": "popup.html",
   "version": "1.1",
   "manifest_version": 2,
   "background": {
@@ -25,16 +25,26 @@
 
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
- /* "browser_action": {
-      "default_title": "Sidetool",
-      "default_icon": "img//icon.png",
-      "default_popup": "Sidetool.html"
+  "browser_action": {
+      "default_title": "Recorder",
+      "default_icon": "img//play.png",
+      "default_popup": "popup.html"
   },
-*/
+
   "commands": {
     "screenshot" : {
-    "suggested_key" :  { "default" : "Alt+S" },
+    "suggested_key" :  { "default" : "Alt+P" },
     "description" : " Take a screenshot"
+   },
+
+   "startRecording" : {
+    "suggested_key" :  { "default" : "Alt+R" },
+    "description" : " start recording"
+   },
+
+   "stopRecording" : {
+    "suggested_key" :  { "default" : "Alt+S" },
+    "description" : " stop recording"
    }
   }
 }

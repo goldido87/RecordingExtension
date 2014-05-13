@@ -3,12 +3,19 @@
 var ExtensionDataName = "persistentData";
 
 // Holds the application commands
-// Holds the application commands
 var ExtensionData = {
   dataVersion: 4,
-  isRecording: false,
+  appStatus: "stop",
   commands: []
 };
+
+var second = 1000;
+var recordingTime = 0;
+var timeInterval;
+
+  /////////////
+ // STORGAE //
+/////////////
 
 function DB_load(callback) {
     chrome.storage.local.get(ExtensionDataName, function(r) {
@@ -64,10 +71,12 @@ function saveData(id, value)
  // EVENTS //
 ////////////
 
-document.addEventListener('click', function(event) {
-  console.log("click " + event );
-});
+window.onload = function()
+{
+  DB_load(); 
+}
 
+// Listen to special keys commands (e.g ALT+S)
 chrome.commands.onCommand.addListener(function(command) 
 {
 	if (command == "screenshot")
@@ -76,11 +85,19 @@ chrome.commands.onCommand.addListener(function(command)
       { format: "jpeg" , quality: 10 }, function(dataUrl) 
 	  {
 		  saveData("screenshot", dataUrl);
-      //console.log(dataUrl); 
 		});
+  }
+  else if (command == "startRecording")
+  {
+    startRecording();
+  }
+  else if (command == "stopRecording")
+  {
+    stopRecording();
   }
 });
 
+// Listen to new tab opens
 chrome.tabs.onCreated.addListener(function(tab) {
   saveData("newtab", "url: " + tab.url + " status: " + tab.status);
 });
@@ -97,11 +114,6 @@ chrome.tabs.onCreated.addListener(function(tab) {
 
 // });
 
-window.onload = function()
-{
-  DB_load();
-}
-
 // Listen for messages from content script
 chrome.runtime.onConnect.addListener(function(port) {
 
@@ -109,47 +121,184 @@ chrome.runtime.onConnect.addListener(function(port) {
 
     if (msg.type == "load")
     {
-      DB_load(function() {
-        port.postMessage({type: "refreshData", data: ExtensionData});
-      });
+      DB_load(function() { port.postMessage({type: "refreshData", data: ExtensionData}); });
     }
-    else if (msg.type == "startSimulation")
+    else if (msg.type == "stopRecording")
     {
-      var script = msg.detail;
-      //alert(script);
-
-      chrome.tabs.create({ url: msg.url, active: false }, function(tab) 
-      {    
-        chrome.tabs.update(tab.id, { active:true });
-        // Inject script to url
-        chrome.tabs.executeScript( tab.id, {code: script} );
-      });  
-
+      stopRecording();
+      // Tell client to reset data
       port.postMessage({type: "initClient"});
     }
-    else if (msg.type == "isRecording_Changed")
+    else if (msg.type == "pauseRecording")
     {
-      ExtensionData.isRecording = msg.data;  
-      DB_save();
+      changeRecordingStatus("pause");
     }
     else if (msg.type == "startRecording")
     {
-      chrome.tabs.getSelected(null, function(tab) {
-        // Save the tab url
-        saveData("url", tab.url);
-        // Reload tab to make sure the content
-        // script will be injected
-        chrome.tabs.reload(tab.id);
-        
-      });
+      startRecording();
     }
     else if (msg.type == "clearData")
     {
-      DB_clear(function() 
-      { 
-        port.postMessage({type: "initClient"});
-        ExtensionData.commands = []; 
-      });
+      clearData();
     }
+
   });
+  
 });
+
+
+function changeRecordingStatus(status)
+{
+  ExtensionData.appStatus = status;  
+
+  if (status == "stop" || status == "pause")
+    clearInterval(timeInterval);
+
+  DB_save();
+}
+
+function startRecording()
+{
+  changeRecordingStatus("play");
+
+  timeInterval = 
+    setInterval(function() {
+      chrome.browserAction.setBadgeText({ text: recordingTime.toString() });
+      recordingTime++;
+    }, second);
+
+  chrome.tabs.getSelected(null, function(tab) {
+    // Save the tab url
+    saveData("url", tab.url);
+    // Reload tab to make sure the content
+    // script will be injected
+    chrome.tabs.reload(tab.id);
+  });
+}
+
+function stopRecording()
+{
+  changeRecordingStatus("stop");
+  resetTimeCounter();
+  generateScript();
+}
+
+function startSimulation(script, startingUrl)
+{
+  chrome.tabs.create({ url: startingUrl, active: false }, function(tab) 
+  {    
+    chrome.tabs.update(tab.id, { active: true });
+    // Inject script to url
+    chrome.tabs.executeScript( tab.id, {code: script} );
+  }); 
+}
+
+function resetTimeCounter()
+{
+  chrome.browserAction.setBadgeText({text: ""});
+  recordingTime = 0;
+}
+
+function clearData()
+{
+  DB_clear(function() 
+  { 
+    //port.postMessage({type: "initClient"});
+    ExtensionData.commands = []; 
+  });
+}
+
+// Generates a script from all saved commands
+// and injects it to the new tab to start simulation
+function generateScript()
+{
+    var script = "";
+    var action = "";
+
+    // The url when user started his recording
+    var startingUrl = "";
+    var numOfCommands = ExtensionData.commands.length;
+
+    // For handling typing into text fields
+    var InputData = {
+      // Indicates that we are in a text box
+      // to save upcoming keyboard commands
+      isInInputField: false,
+      // Holds the id or class of the 
+      // text box that the user is typing into
+      identification: "",
+      // Saves the text entered
+      text: ""
+    };
+
+    script += "$('document').ready(function() {" + "\n";
+
+    for (var i = 0; i < numOfCommands; i++) 
+    {
+        var command = ExtensionData.commands[i]; 
+
+        if (command.id == "url")
+        {
+            startingUrl = ExtensionData.commands[i].name;
+            continue;
+        }
+
+        switch(command.id)
+        {
+            case "click":
+            case "click_input_submit":
+                action = "$('" + command.name + "').trigger('click');";
+                break;
+
+            case "click_a":    
+                action = command.name;
+                break;
+
+            case "click_input_text":
+                action = "$('" + command.name + "').focus();"; 
+                InputData.isInInputField = true;
+                InputData.identification = command.name;
+                break;
+
+            case "scroll":
+                var coords = command.name.split(",");
+                action = "window.scrollTo(" + coords[0] + "," + coords[1] + ");";
+                break;
+
+            case "keyboard":
+                if (InputData.isInInputField == true)
+                { 
+                    InputData.text += command.name;
+                    action = "$('" + InputData.identification + "').val('" + InputData.text + "');";
+                }
+                /*else
+                {
+                    action = "alert('Key pressed: " + command.name + "');";
+                }*/
+                break;
+
+            case "focusout":
+                InputData.isInInputField = false;
+                InputData.text = "";
+                break;
+
+            case "screenshot":
+                action = "window.open('" + command.name + "');";
+                break;
+        }
+
+        script += action;
+        // Set timeout for each command
+        //script += "window.setTimeout(function(){" + action +"}, 3000);";
+        script += "\n";
+    }
+
+    script += "});";
+
+    // Clear all commands data after prepering 
+    // the script, before actual execution
+    clearData();
+
+    if (numOfCommands > 1)
+        startSimulation(script, startingUrl);
+}
