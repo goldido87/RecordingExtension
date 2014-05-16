@@ -157,6 +157,7 @@ function deleteRecording(recordingId)
         if (recording.id == recordingId)
         {
             port.postMessage({type: "deleteRecording", index: i});
+            location.reload();
             return;
         }
     }

@@ -138,6 +138,8 @@ chrome.commands.onCommand.addListener(function(command)
   }
   else if (command == "stopRecording")  // ALT + S
   {
+    // Load all data that has been 
+    // saved during the recording
     DB_load(function() { stopRecording(); });
   }
   else if (command == "pauseRecording") // ALT + P
@@ -183,7 +185,7 @@ chrome.runtime.onConnect.addListener(function(port) {
     }
     else if (msg.type == "playRecording")
     {
-      var recording = ExtensionData.recordings[msg.index];
+      var recording = getRecordById(msg.index);
       startSimulation(recording.script, recording.startingUrl);
     }
     else if (msg.type == "stopRecording")
@@ -208,6 +210,18 @@ chrome.runtime.onConnect.addListener(function(port) {
   });
 });
 
+function getRecordById(id)
+{
+  for (var i = 0; i < ExtensionData.recordings.length; i++)
+  {
+    var record = ExtensionData.recordings[i];
+
+    if (record.id == id)
+    {
+      return record;
+    }
+  }
+}
 
 function changeRecordingStatus(status)
 {
