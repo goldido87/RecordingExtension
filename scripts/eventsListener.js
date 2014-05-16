@@ -102,20 +102,6 @@ function saveData(id, value)
 
 DB_load(function() 
 { 
-/*    $( "body" ).click(function( event ) {
-        
-        var prefix = "#";
-        var identification = $(this).attr('id');
-
-        if (identification == undefined)
-        {
-            prefix = ".";
-            identification = $(this).attr('class');
-        }
-        if (identification != undefined)
-            saveData("click", "btn:" + prefix + identification);
-    });*/
-
     $('a').click(function (event){ 
         var link = $(this);
         var target = link.attr("target");

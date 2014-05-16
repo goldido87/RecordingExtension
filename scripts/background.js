@@ -132,15 +132,15 @@ chrome.commands.onCommand.addListener(function(command)
 		  saveData("screenshot", dataUrl);
 		});
   }
-  else if (command == "startRecording")
+  else if (command == "startRecording") // ALT + R
   {
     startRecording();
   }
-  else if (command == "stopRecording")
+  else if (command == "stopRecording")  // ALT + S
   {
-    stopRecording();
+    DB_load(function() { stopRecording(); });
   }
-  else if (command == "pauseRecording")
+  else if (command == "pauseRecording") // ALT + P
   {
     changeRecordingStatus("pause");
   }
