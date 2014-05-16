@@ -4,14 +4,17 @@ var ExtensionDataName = "persistentData";
 
 // Holds the application commands
 var ExtensionData = {
-  dataVersion: 4,
+  dataVersion: 5,
   appStatus: "stop",
-  commands: []
+  commands: [],
+  recordingId: 0,
+  recordings: []
 };
 
 var second = 1000;
 var recordingTime = 0;
 var timeInterval;
+
 
   /////////////
  // STORGAE //
@@ -67,13 +70,55 @@ function saveData(id, value)
   });
 }
 
+function saveRecording(script, startingUrl, captureUrl, recordingLength)
+{
+  DB_load(function() {
+
+    ExtensionData.recordings.push({id: ExtensionData.recordingId++,
+                                   startingUrl: startingUrl,
+                                   capture: captureUrl,
+                                   script: script,
+                                   length: recordingLength,
+                                   time: getCurrentDate()
+                                 });
+
+    DB_save();  
+  });
+}
+
   ////////////
  // EVENTS //
 ////////////
 
 window.onload = function()
 {
-  DB_load(); 
+  ExtensionLoaded();
+}
+
+function ExtensionLoaded()
+{
+  DB_load(setExtensionIcon());
+}
+
+function setExtensionIcon()
+{
+  var iconImage;
+
+  switch (ExtensionData.appStatus)
+  {
+    case "play":
+      iconImage = "img/icon.png";
+      break;
+
+    default:
+      iconImage = "img/play.png"
+  }
+
+  chrome.tabs.getSelected(null, function(tab) {
+    // Change extension icon
+    chrome.browserAction.setIcon({path: iconImage, tabId: tab.id});
+  });
+  
 }
 
 // Listen to special keys commands (e.g ALT+S)
@@ -95,6 +140,10 @@ chrome.commands.onCommand.addListener(function(command)
   {
     stopRecording();
   }
+  else if (command == "pauseRecording")
+  {
+    changeRecordingStatus("pause");
+  }
 });
 
 // Listen to new tab opens
@@ -103,16 +152,20 @@ chrome.tabs.onCreated.addListener(function(tab) {
 });
 
 // //onUpdate tab state  - e.g: refresh, enter another address URL
-// chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
- 
+ chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
 
+  // No change in the url means that it's a refresh
+  if (changeInfo.url === undefined)
+  {
+    ExtensionLoaded();
+  }
 //   console.log(changeInfo.url.indexOf("chrome-extension://"));
 //   console.log(changeInfo.url.indexOf("chrome://"));
 
 //  // if((changeInfo.status == "complete") && !changeInfo.url.startWith("chrome-extension://") || !changeInfo.url.startWith("chrome://"))
 //  //      saveData('refreshTab',"url: " + tab.url + " status: " + tab.status);
 
-// });
+ });
 
 // Listen for messages from content script
 chrome.runtime.onConnect.addListener(function(port) {
@@ -122,6 +175,16 @@ chrome.runtime.onConnect.addListener(function(port) {
     if (msg.type == "load")
     {
       DB_load(function() { port.postMessage({type: "refreshData", data: ExtensionData}); });
+    }
+    else if (msg.type == "deleteRecording")
+    {
+      ExtensionData.recordings.splice(msg.index, 1);
+      DB_save(function() { port.postMessage({type: "refreshData", data: ExtensionData}); }); 
+    }
+    else if (msg.type == "playRecording")
+    {
+      var recording = ExtensionData.recordings[msg.index];
+      startSimulation(recording.script, recording.startingUrl);
     }
     else if (msg.type == "stopRecording")
     {
@@ -140,10 +203,9 @@ chrome.runtime.onConnect.addListener(function(port) {
     else if (msg.type == "clearData")
     {
       clearData();
+      port.postMessage({type: "initClient"}); 
     }
-
   });
-  
 });
 
 
@@ -159,6 +221,10 @@ function changeRecordingStatus(status)
 
 function startRecording()
 {
+  // check that not already recording
+  if (ExtensionData.appStatus == "play")
+    return;
+
   changeRecordingStatus("play");
 
   timeInterval = 
@@ -179,7 +245,7 @@ function startRecording()
 function stopRecording()
 {
   changeRecordingStatus("stop");
-  resetTimeCounter();
+  setExtensionIcon();
   generateScript();
 }
 
@@ -203,7 +269,8 @@ function clearData()
 {
   DB_clear(function() 
   { 
-    //port.postMessage({type: "initClient"});
+    changeRecordingStatus("stop");
+    resetTimeCounter();
     ExtensionData.commands = []; 
   });
 }
@@ -218,18 +285,6 @@ function generateScript()
     // The url when user started his recording
     var startingUrl = "";
     var numOfCommands = ExtensionData.commands.length;
-
-    // For handling typing into text fields
-    var InputData = {
-      // Indicates that we are in a text box
-      // to save upcoming keyboard commands
-      isInInputField: false,
-      // Holds the id or class of the 
-      // text box that the user is typing into
-      identification: "",
-      // Saves the text entered
-      text: ""
-    };
 
     script += "$('document').ready(function() {" + "\n";
 
@@ -256,8 +311,6 @@ function generateScript()
 
             case "click_input_text":
                 action = "$('" + command.name + "').focus();"; 
-                InputData.isInInputField = true;
-                InputData.identification = command.name;
                 break;
 
             case "scroll":
@@ -266,20 +319,11 @@ function generateScript()
                 break;
 
             case "keyboard":
-                if (InputData.isInInputField == true)
-                { 
-                    InputData.text += command.name;
-                    action = "$('" + InputData.identification + "').val('" + InputData.text + "');";
-                }
+                action = command.name;
                 /*else
                 {
                     action = "alert('Key pressed: " + command.name + "');";
                 }*/
-                break;
-
-            case "focusout":
-                InputData.isInInputField = false;
-                InputData.text = "";
                 break;
 
             case "screenshot":
@@ -292,13 +336,55 @@ function generateScript()
         //script += "window.setTimeout(function(){" + action +"}, 3000);";
         script += "\n";
     }
-
+    // Close document.ready
     script += "});";
 
-    // Clear all commands data after prepering 
-    // the script, before actual execution
+    var recordingLength = formatRecordingLength();
+    // When the script is ready
+    // we can clear all data
     clearData();
 
     if (numOfCommands > 1)
-        startSimulation(script, startingUrl);
+    {
+      chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT, 
+        { format: "jpeg" , quality: 10 }, function(dataUrl) 
+      {
+        saveRecording(script ,startingUrl, dataUrl, recordingLength);
+      });
+      //startSimulation(script, startingUrl);
+    }
+}
+
+function getCurrentDate()
+{
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth()+1; //January is 0!
+  var yyyy = today.getFullYear();
+
+  if(dd<10) {
+      dd='0'+dd
+  } 
+
+  if(mm<10) {
+      mm='0'+mm
+  } 
+
+  return mm+'/'+dd+'/'+yyyy;
+}
+
+function formatRecordingLength()
+{
+  var minutes = Math.floor(recordingTime / 60);
+  var seconds = recordingTime - (minutes * 60); 
+  
+  if(minutes<10) {
+      minutes='0'+minutes
+  } 
+
+  if(seconds<10) {
+      seconds='0'+seconds
+  }
+
+  return minutes + ":" + seconds;
 }

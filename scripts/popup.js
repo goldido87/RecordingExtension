@@ -4,9 +4,10 @@ var ExtensionDataName = "persistentData";
 
 // Holds the application commands
 var ExtensionData = {
-  dataVersion: 4,
+  dataVersion: 5,
   appStatus: "stop",
-  commands: []
+  commands: [],
+  recordings: []
 };
 
 // Port used to communicate with background.js
@@ -29,7 +30,7 @@ $("document").ready(function()
      // BUTTON EVENTS ///
     ////////////////////
 
-    $( "#playBtn" ).click(function() {
+    /*$( "#playBtn" ).click(function() {
         changeButtonBackground("playBtn");
         ExtensionData.appStatus = "play";
         startRecording();
@@ -48,10 +49,8 @@ $("document").ready(function()
 
     $( "#clearBtn" ).click(function() {
         changeButtonBackground("clearBtn");
-        ExtensionData.appStatus = "stop";
-        stopRecording();
         clearCommands();
-    });
+    });*/
 
     port = chrome.runtime.connect({name: portName});
 
@@ -59,17 +58,19 @@ $("document").ready(function()
     port.onMessage.addListener(function(msg) {
         if (msg.type == "refreshData")
         {
+            // Clear recordings list
+            $("#recordsList").empty();
             ExtensionData = msg.data; 
             init();
         }
-        else if (msg.type == "initClient")
+        /*else if (msg.type == "initClient")
         {
             ExtensionData.commands = [];
             history.go(0);
-        }
+        }*/
     });
 
-    // When the app is loaded, load all data
+    // Request data load
     port.postMessage({type: "load"});
 });
 
@@ -92,6 +93,36 @@ function init()
                 clearCommands();
             break;
     }
+
+    
+    var list = $('#recordsList');
+
+    // Add available recordings to list
+    for (var i = 0; i < ExtensionData.recordings.length; i++) 
+    {
+        var recording = ExtensionData.recordings[i];
+
+        var li = "<li id=" + recording.id + "><div class='recordItem'>" +
+                    "<input type='image' src='img/black-play.png' class='playBtn' />" + 
+                    "<img class='extensionIcon' src='" + recording.capture + "'/>" +
+                    "<div class='guideName'>GUIDE " + recording.id + "</div>" + 
+                    "<div class='guideTime'>" + recording.length + " | " + recording.time + "</div>" +
+                    "<input type='image' src='img/share.png' class='shareBtn' />" +
+                    "<input type='image' src='img/edit.png' class='editBtn' />" +
+                    "<input type='image' src='img/delete.png' class='deleteBtn'/></div></li>";
+
+        list.append(li);
+    }
+
+    $( ".deleteBtn" ).click(function() {
+        var recordingId = $(this).closest("li").attr("id");
+        deleteRecording(recordingId);
+    });
+
+    $( ".playBtn" ).click(function() {
+        var recordingId = $(this).closest("li").attr("id");
+        port.postMessage({type: "playRecording", index: recordingId});
+    });
 }
 
 
@@ -115,6 +146,20 @@ function clearCommands()
 {
     // Clear persistent data
     port.postMessage({type: "clearData"});
+}
+
+function deleteRecording(recordingId)
+{
+    for (var i = 0; i < ExtensionData.recordings.length; i++) 
+    {
+        var recording = ExtensionData.recordings[i]; 
+        
+        if (recording.id == recordingId)
+        {
+            port.postMessage({type: "deleteRecording", index: i});
+            return;
+        }
+    }
 }
 
 function postCommandsToServer()

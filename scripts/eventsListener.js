@@ -22,10 +22,25 @@ var ExtensionDataName = "persistentData";
 
 // Holds the application commands
 var ExtensionData = {
-  dataVersion: 4,
+  dataVersion: 5,
   appStatus: "stop",
-  commands: []
+  commands: [],
+  recordings: []
 };
+
+// For handling typing into text fields
+var InputData = {
+  // Indicates that we are in a text box
+  // to save upcoming keyboard commands
+  isInInputField: false,
+  // Holds the id or class of the 
+  // text box that the user is typing into
+  identification: "",
+  // Saves the text entered
+  text: ""
+};
+
+
 
 function DB_load(callback) {
     chrome.storage.local.get(ExtensionDataName, function(r) {
@@ -72,6 +87,7 @@ function DB_save(callback) {
 function saveData(id, value)
 {
     DB_load(function() {
+
         if (ExtensionData.appStatus == "play")
         {
             ExtensionData.commands.push({id: id, name: value, time: new Date().getMilliseconds()});
@@ -118,7 +134,7 @@ DB_load(function()
         saveData("click_a", action);
     });
 
-    $('input').click(function (event){ 
+    $('input').click(function (event) { 
 
         var prefix = "#";
         var identification = $(this).attr('id');
@@ -137,6 +153,9 @@ DB_load(function()
             }
             else
             {
+                InputData.isInInputField = true;
+                InputData.identification = prefix + identification;
+
                 saveData("click_input_text", prefix + identification);
             }
         }
@@ -158,8 +177,15 @@ DB_load(function()
         }
     });*/
 
-    $('input').focusout(function(){
-        saveData("focusout", "");
+    $('input').focusout(function() {
+        if (InputData.isInInputField)
+        {
+            // Left the input field
+            InputData.isInInputField = false;
+            // Saved the string typed in the field
+            saveTypedString();
+        }
+        //saveData("focusout", "");
     }); 
 
     // Listen to keyboard events
@@ -192,5 +218,24 @@ function rightClickEvent(mouseEvent) {
 function keyPressed(e) {
     var key = ( window.event ) ? event.keyCode : e.keyCode;
     // Format the key code to the actual char
-    saveData("keyboard", String.fromCharCode(key));
+    var character = String.fromCharCode(key);
+
+    InputData.text += character;
+
+    // When we are not in the text box 
+    // anymore, save the string  written
+    if (!InputData.isInInputField)
+    {
+        saveTypedString();
+    }
+}
+
+function saveTypedString()
+{
+    if (InputData.text != "" && InputData.identification != "")
+    {
+        saveData("keyboard", "$('" + InputData.identification + "').val('" + InputData.text + "');");
+        InputData.text = "";
+        InputData.identification = "";
+    }
 }

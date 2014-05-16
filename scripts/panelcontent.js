@@ -6,7 +6,8 @@ var ExtensionDataName = "persistentData";
 var ExtensionData = {
   dataVersion: 4,
   isRecording: false,
-  commands: []
+  commands: [],
+  recordings: []
 };
 
 // Port used to communicate with background.js

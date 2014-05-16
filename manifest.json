@@ -33,12 +33,17 @@
 
   "commands": {
     "screenshot" : {
-    "suggested_key" :  { "default" : "Alt+P" },
+    "suggested_key" :  { "default" : "Alt+C" },
     "description" : " Take a screenshot"
    },
 
    "startRecording" : {
     "suggested_key" :  { "default" : "Alt+R" },
+    "description" : " start recording"
+   },
+
+   "pauseRecording" : {
+    "suggested_key" :  { "default" : "Alt+P" },
     "description" : " start recording"
    },
 
