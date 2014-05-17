@@ -122,8 +122,8 @@ body
 {
 	width: 25px;
 	height: 25px;
-	margin-left: 105px;
-	margin-bottom: 6px;
+	margin-left: 108px;
+	margin-bottom: 5px;
 }
 
 .editBtn
@@ -131,7 +131,7 @@ body
 	width: 10px;
 	height: 10px;
 	position: absolute;
-	margin-left: 12px;
+	margin-left: 15px;
 	margin-top: 6px;
 }
 
@@ -140,7 +140,7 @@ body
 	width: 10px;
 	height: 10px;
 	position: absolute;
-	margin-left: 12px;
+	margin-left: 15px;
 	margin-top: 22px;
 }
 
