@@ -7,6 +7,7 @@ var ExtensionData = {
   dataVersion: 5,
   appStatus: "stop",
   commands: [],
+  recordingId: 0,
   recordings: []
 };
 
@@ -26,32 +27,6 @@ var serverAddress = "67.231.242.50";
 
 $("document").ready(function() 
 {
-      ////////////////////
-     // BUTTON EVENTS ///
-    ////////////////////
-
-    /*$( "#playBtn" ).click(function() {
-        changeButtonBackground("playBtn");
-        ExtensionData.appStatus = "play";
-        startRecording();
-    });
-
-    $( "#stopBtn" ).click(function() {
-        ExtensionData.appStatus = "stop";
-        stopRecording();
-    });
-
-    $( "#pauseBtn" ).click(function() {
-        changeButtonBackground("pauseBtn");
-        ExtensionData.appStatus = "pause";
-        stopRecording();
-    });
-
-    $( "#clearBtn" ).click(function() {
-        changeButtonBackground("clearBtn");
-        clearCommands();
-    });*/
-
     port = chrome.runtime.connect({name: portName});
 
     // Listen to messages from background.js
@@ -63,12 +38,12 @@ $("document").ready(function()
             ExtensionData = msg.data; 
             init();
         }
-        /*else if (msg.type == "initClient")
-        {
-            ExtensionData.commands = [];
-            history.go(0);
-        }*/
     });
+
+    $( '#recordBtn' ).click(function() {
+        port.postMessage({type: "startRecording"});    
+    });
+
 
     // Request data load
     port.postMessage({type: "load"});

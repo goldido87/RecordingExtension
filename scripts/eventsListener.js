@@ -25,6 +25,7 @@ var ExtensionData = {
   dataVersion: 5,
   appStatus: "stop",
   commands: [],
+  recordingId: 0,
   recordings: []
 };
 

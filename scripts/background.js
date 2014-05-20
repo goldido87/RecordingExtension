@@ -15,6 +15,8 @@ var second = 1000;
 var recordingTime = 0;
 var timeInterval;
 
+var commandsFeedbackInterval;
+
 
   /////////////
  // STORGAE //
@@ -92,33 +94,34 @@ function saveRecording(script, startingUrl, captureUrl, recordingLength)
 
 window.onload = function()
 {
-  ExtensionLoaded();
+  DB_load(ExtensionLoaded());
 }
 
 function ExtensionLoaded()
 {
-  DB_load(setExtensionIcon());
+  setExtensionIcon();
 }
 
 function setExtensionIcon()
 {
-  var iconImage;
+  var iconPath;
+  var lastCommandIndex = ExtensionData.commands.length - 1;
 
   switch (ExtensionData.appStatus)
   {
     case "play":
-      iconImage = "img/stop.png";
+      iconPath = getIconByCommand(ExtensionData.commands[lastCommandIndex].id);
       break;
 
+    case "stop":
     default:
-      iconImage = "img/record.png"
+      iconPath = "img/record.png"
   }
 
   chrome.tabs.getSelected(null, function(tab) {
     // Change extension icon
-    chrome.browserAction.setIcon({path: iconImage, tabId: tab.id});
-  });
-  
+    chrome.browserAction.setIcon({path: iconPath, tabId: tab.id});
+  }); 
 }
 
 // Listen to special keys commands (e.g ALT+S)
@@ -228,14 +231,17 @@ function changeRecordingStatus(status)
   ExtensionData.appStatus = status;  
 
   if (status == "stop" || status == "pause")
+  {
     clearInterval(timeInterval);
+    clearInterval(commandsFeedbackInterval);
+  }
 
   DB_save();
 }
 
 function startRecording()
 {
-  // check that not already recording
+  // Check that not already recording
   if (ExtensionData.appStatus == "play")
     return;
 
@@ -243,8 +249,13 @@ function startRecording()
 
   timeInterval = 
     setInterval(function() {
+
+      // Start counting recording time
       chrome.browserAction.setBadgeText({ text: recordingTime.toString() });
       recordingTime++;
+      // Change icon according to last command made
+      DB_load(setExtensionIcon());
+
     }, second);
 
   chrome.tabs.getSelected(null, function(tab) {
@@ -258,6 +269,10 @@ function startRecording()
 
 function stopRecording()
 {
+  // Check that not already stopped
+  if (ExtensionData.appStatus == "stop")
+    return;
+
   changeRecordingStatus("stop");
   setExtensionIcon();
   generateScript();
@@ -360,6 +375,7 @@ function generateScript()
 
     if (numOfCommands > 1)
     {
+      // Capture an image for the recording to be displayed 
       chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT, 
         { format: "jpeg" , quality: 10 }, function(dataUrl) 
       {
@@ -367,38 +383,4 @@ function generateScript()
       });
       //startSimulation(script, startingUrl);
     }
-}
-
-function getCurrentDate()
-{
-  var today = new Date();
-  var dd = today.getDate();
-  var mm = today.getMonth()+1; //January is 0!
-  var yyyy = today.getFullYear();
-
-  if(dd<10) {
-      dd='0'+dd
-  } 
-
-  if(mm<10) {
-      mm='0'+mm
-  } 
-
-  return mm+'/'+dd+'/'+yyyy;
-}
-
-function formatRecordingLength()
-{
-  var minutes = Math.floor(recordingTime / 60);
-  var seconds = recordingTime - (minutes * 60); 
-  
-  if(minutes<10) {
-      minutes='0'+minutes
-  } 
-
-  if(seconds<10) {
-      seconds='0'+seconds
-  }
-
-  return minutes + ":" + seconds;
 }
