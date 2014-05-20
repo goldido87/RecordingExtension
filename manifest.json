@@ -2,9 +2,9 @@
   "name": "Action Recorder",
   "description": "",
   "icons": {
-    "16": "img/icon.png",
-    "48": "img/icon.png",
-    "128": "img/icon.png"
+    "16": "img/19app-icon.png",
+    "48": "img/19app-icon.png",
+    "128": "img/19app-icon.png"
   },
   "devtools_page": "devpanel.html",
   "options_page": "popup.html",

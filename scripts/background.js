@@ -107,11 +107,11 @@ function setExtensionIcon()
   switch (ExtensionData.appStatus)
   {
     case "play":
-      iconImage = "img/icon.png";
+      iconImage = "img/stop.png";
       break;
 
     default:
-      iconImage = "img/play.png"
+      iconImage = "img/record.png"
   }
 
   chrome.tabs.getSelected(null, function(tab) {
