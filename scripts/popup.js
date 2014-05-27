@@ -41,7 +41,12 @@ $("document").ready(function()
     });
 
     $( '#recordBtn' ).click(function() {
-        port.postMessage({type: "startRecording"});    
+
+        if (ExtensionData.appStatus == "stop")
+            port.postMessage({type: "startRecording"});  
+        else
+            port.postMessage({type: "stopRecording"});
+        
     });
 
 
@@ -54,14 +59,16 @@ function init()
     switch (ExtensionData.appStatus)
     {
         case "play":
-            changeButtonBackground("playBtn");
+            $('#textNewRecord').text("STOP");
             break;
 
         case "pause":
-            changeButtonBackground("pauseBtn");
+            $('#textNewRecord').text("RECORD");
             break;
 
         case "stop":
+            $('#textNewRecord').text("RECORD");
+
             // commands saved while not recording
             // have no importance
             if (ExtensionData.commands.length > 0)
@@ -78,13 +85,13 @@ function init()
         var recording = ExtensionData.recordings[i];
 
         var li = "<li id=" + recording.id + "><div class='recordItem'>" +
-                    "<input type='image' src='img/black-play.png' class='playBtn' />" + 
-                    "<img class='extensionIcon' src='" + recording.capture + "'/>" +
+                    "<input type='image' src='img/playBtn.png' class='playBtn' />" + 
+                    "<img class='recordCapture' src='" + recording.capture + "'/>" +
                     "<div class='guideName'>GUIDE " + recording.id + "</div>" + 
                     "<div class='guideTime'>" + recording.length + " | " + recording.time + "</div>" +
-                    "<input type='image' src='img/share.png' class='shareBtn' />" +
-                    "<input type='image' src='img/edit.png' class='editBtn' />" +
-                    "<input type='image' src='img/delete.png' class='deleteBtn'/></div></li>";
+                    "<button class='shareBtn'/>" +
+                    "<button class='editBtn'/>" +
+                    "<button class='deleteBtn'/></div></li>";
 
         list.append(li);
     }

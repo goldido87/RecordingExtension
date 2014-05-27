@@ -1,52 +1,53 @@
 
-function getImageElement(commandId)
+function getIconByCommand(commandId)
 {
-    var img = document.createElement("img");
+    var directory = "img/19px/";
+    var imgPath;
 
     switch(commandId)
     {
     	case "url":
-    		img.src = "img/play.png";
+    		imgPath = "img/internet.png";
     		break;
 
         case "screenshot": 
-            img.src = "img/screenshot.png";
+            imgPath = directory + "screenshot.png";
             break;
 
         case "click":
         case "click_a":
         case "click_input_text":
         case "click_input_submit":
-            img.src = "img/click.png";
+            imgPath = directory + "click.png";
             break;
 
         case "rightclick":
-            img.src = "img/rightclick.png"
+            imgPath = directory + "rightclick.png"
             break;
 
         case "keyboard":
-            img.src = "img/keyboard.png";
+            imgPath = directory + "keyboard.png";
             break;
 
         case "newtab":
-            img.src = "img/newtab.png";
+            imgPath = directory + "newtab.png";
             break;
 
         case "scroll":
-            img.src = "img/scroll.png";
+            imgPath = directory + "scroll.png";
             break;
 
         case "refreshTab":
-            img.src = "img/refresh.png";
+            imgPath = "img/refresh.png";
             break;
 
         case "newURLSearch":
-            img.src = "img/NewURLSearch.png";
+            imgPath = "img/NewURLSearch.png";
             break;
 
     }
 
-    return img;
+    return imgPath;
 }
 
 function getListNameByEvent(commandId)
@@ -103,4 +104,38 @@ function exportCommands()
     }
 
     console.log(message);
+}
+
+function getCurrentDate()
+{
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth()+1; //January is 0!
+  var yyyy = today.getFullYear();
+
+  if(dd<10) {
+      dd='0'+dd
+  } 
+
+  if(mm<10) {
+      mm='0'+mm
+  } 
+
+  return mm+'/'+dd+'/'+yyyy;
+}
+
+function formatRecordingLength()
+{
+  var minutes = Math.floor(recordingTime / 60);
+  var seconds = recordingTime - (minutes * 60); 
+  
+  if(minutes<10) {
+      minutes='0'+minutes
+  } 
+
+  if(seconds<10) {
+      seconds='0'+seconds
+  }
+
+  return minutes + ":" + seconds;
 }

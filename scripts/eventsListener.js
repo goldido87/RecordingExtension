@@ -111,11 +111,11 @@ DB_load(function()
 
         if($.trim(target).length > 0)
         {
-            action = "window.open('" + href + "'), " + target + ");";
+            action = "window.open('" + href + "'), " + target + ")";
         }
         else
         {
-            action = "window.location = '" + href + "';";
+            action = "window.location = '" + href + "'";
         }
 
         saveData("click_a", action);
@@ -221,7 +221,7 @@ function saveTypedString()
 {
     if (InputData.text != "" && InputData.identification != "")
     {
-        saveData("keyboard", "$('" + InputData.identification + "').val('" + InputData.text + "');");
+        saveData("keyboard", "$('" + InputData.identification + "').val('" + InputData.text + "')");
         InputData.text = "";
         InputData.identification = "";
     }

@@ -308,6 +308,7 @@ function clearData()
 // and injects it to the new tab to start simulation
 function generateScript()
 {
+    var commands = [];
     var script = "";
     var action = "";
 
@@ -315,7 +316,7 @@ function generateScript()
     var startingUrl = "";
     var numOfCommands = ExtensionData.commands.length;
 
-    script += "$('document').ready(function() {" + "\n";
+    script += "var actions = [];" + "\n\n";
 
     for (var i = 0; i < numOfCommands; i++) 
     {
@@ -331,7 +332,7 @@ function generateScript()
         {
             case "click":
             case "click_input_submit":
-                action = "$('" + command.name + "').trigger('click');";
+                action = "$('" + command.name + "').trigger('click')";
                 break;
 
             case "click_a":    
@@ -339,36 +340,49 @@ function generateScript()
                 break;
 
             case "click_input_text":
-                action = "$('" + command.name + "').focus();"; 
+                action = "$('" + command.name + "').focus()"; 
                 break;
 
             case "scroll":
                 var coords = command.name.split(",");
-                action = "window.scrollTo(" + coords[0] + "," + coords[1] + ");";
+                action = "window.scrollTo(" + coords[0] + "," + coords[1] + ")";
                 break;
 
             case "keyboard":
                 action = command.name;
-                /*else
-                {
-                    action = "alert('Key pressed: " + command.name + "');";
-                }*/
                 break;
 
             case "screenshot":
-                action = "window.open('" + command.name + "');";
+                action = "window.open('" + command.name + "')";
                 break;
         }
 
-        script += action;
+        //script += action;
         // Set timeout for each command
-        //script += "window.setTimeout(function(){" + action +"}, 3000);";
-        script += "\n";
+        if (action.length > 1)
+        {
+          script += "actions.push({ action:" + action + ", time: " + command.time + " });";
+          script += "\n";
+        }
     }
-    // Close document.ready
-    script += "});";
 
+    script += "$('document').ready(function() {" + "\n";
+    script += "process_action(0);" + "\n";
+    // Close document.ready
+    script += "});" + "\n\n";
+
+    script += "function process_action(i) {" + "\n" +
+    " alert(i);" +
+    "if (i < actions.length-1) {" +
+        "setTimeout(function() {" +
+           "process_action(i+1);" +
+        "}, 1000); } }" + "\n";
+
+    console.log(script);
+
+    // Format the recording time 
     var recordingLength = formatRecordingLength();
+
     // When the script is ready
     // we can clear all data
     clearData();
