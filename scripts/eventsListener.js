@@ -140,6 +140,10 @@ DB_load(function()
             {
                 saveData("click_input_submit", prefix + identification);
             }
+            else if (type == "checkbox")
+            {
+                saveData("click_input_checkbox", prefix + identification);
+            }
             else
             {
                 InputData.isInInputField = true;

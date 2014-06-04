@@ -92,7 +92,7 @@ function init()
         var li = "<li id=" + recording.id + "><div class='recordItem'>" +
                     "<input type='image' src='img/playBtn.png' class='playBtn' />" + 
                     "<img class='recordCapture' src='" + recording.capture + "'/>" +
-                    "<div class='guideName'>Record " + recording.id + "</div>" + 
+                    "<div class='guideName'>" + recording.name + "</div>" + 
                     "<div class='guideTime'>" + recording.length + " | " + dateFormat + "</div>" +
                     "<button class='shareBtn'/>" +
                     "<button class='editBtn'/>" +

@@ -67,7 +67,7 @@ function DB_save(callback) {
 function saveData(id, value)
 {
   var currentTime = new Date().getTime();
-  
+
   DB_load(function() {
     ExtensionData.commands.push({id: id, name: value, time: currentTime});
     DB_save();  
@@ -76,9 +76,17 @@ function saveData(id, value)
 
 function saveRecording(data, startingUrl, captureUrl, recordingLength)
 {
+  var recordingName = "Recording " + ExtensionData.recordingId;
+  var enteredName = prompt("Name Your Recording !", recordingName);
+
+  if (enteredName != null) {
+    recordingName = enteredName;
+  }
+
   DB_load(function() {
 
     ExtensionData.recordings.push({id: ExtensionData.recordingId++,
+                                   name: recordingName,
                                    startingUrl: startingUrl,
                                    capture: captureUrl,
                                    data: data,

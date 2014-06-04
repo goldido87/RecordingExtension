@@ -24,7 +24,7 @@ $("document").ready(function() {
     commands.sort(function(a, b) {return a.time - b.time});
 
 	// Trigger execution
-	process_action(0);
+	process_action(1);
 
 });
 
@@ -67,6 +67,10 @@ function convertToCommand(command)
 
         case "click_input_text":
             action = "$('" + command.name + "').focus()"; 
+            break;
+
+        case "click_input_checkbox":
+            action = "$('" + command.name + "').prop('checked', true)"; 
             break;
 
         case "scroll":
