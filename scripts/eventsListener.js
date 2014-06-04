@@ -154,6 +154,17 @@ DB_load(function()
         }
     });
 
+    $('input').focusout(function() {
+        if (InputData.isInInputField)
+        {
+            // Left the input field
+            InputData.isInInputField = false;
+            // Saved the string typed in the field
+            saveTypedString();
+        }
+        //saveData("focusout", "");
+    }); 
+
     /*$('div').click(function (event){ 
 
         var prefix = "#";
@@ -169,17 +180,6 @@ DB_load(function()
             saveData("click", prefix + identification);
         }
     });*/
-
-    $('input').focusout(function() {
-        if (InputData.isInInputField)
-        {
-            // Left the input field
-            InputData.isInInputField = false;
-            // Saved the string typed in the field
-            saveTypedString();
-        }
-        //saveData("focusout", "");
-    }); 
 
     // Listen to keyboard events
     document.onkeyup = keyPressed;
