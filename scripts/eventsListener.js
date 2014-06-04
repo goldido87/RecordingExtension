@@ -87,11 +87,13 @@ function DB_save(callback) {
 
 function saveData(id, value)
 {
+    var currentTime = new Date().getTime();
+
     DB_load(function() {
 
         if (ExtensionData.appStatus == "play")
         {
-            ExtensionData.commands.push({id: id, name: value, time: new Date().getMilliseconds()});
+            ExtensionData.commands.push({id: id, name: value, time: currentTime});
             DB_save();
         }  
     });

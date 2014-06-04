@@ -6,7 +6,7 @@
     "48": "img/19app-icon.png",
     "128": "img/19app-icon.png"
   },
-  "devtools_page": "devpanel.html",
+  /*"devtools_page": "devpanel.html",*/
   "options_page": "popup.html",
   "version": "1.1",
   "manifest_version": 2,

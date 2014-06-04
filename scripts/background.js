@@ -13,8 +13,8 @@ var ExtensionData = {
 
 var second = 1000;
 var recordingTime = 0;
-var timeInterval;
 
+var timeInterval;
 var commandsFeedbackInterval;
 
 
@@ -66,20 +66,22 @@ function DB_save(callback) {
 
 function saveData(id, value)
 {
+  var currentTime = new Date().getTime();
+  
   DB_load(function() {
-    ExtensionData.commands.push({id: id, name: value, time: new Date().getMilliseconds()});
+    ExtensionData.commands.push({id: id, name: value, time: currentTime});
     DB_save();  
   });
 }
 
-function saveRecording(script, startingUrl, captureUrl, recordingLength)
+function saveRecording(data, startingUrl, captureUrl, recordingLength)
 {
   DB_load(function() {
 
     ExtensionData.recordings.push({id: ExtensionData.recordingId++,
                                    startingUrl: startingUrl,
                                    capture: captureUrl,
-                                   script: script,
+                                   data: data,
                                    length: recordingLength,
                                    time: getCurrentDate()
                                  });
@@ -97,6 +99,7 @@ window.onload = function()
   DB_load(ExtensionLoaded());
 }
 
+// Do stuff when extension had loaded
 function ExtensionLoaded()
 {
   setExtensionIcon();
@@ -189,7 +192,7 @@ chrome.runtime.onConnect.addListener(function(port) {
     else if (msg.type == "playRecording")
     {
       var recording = getRecordById(msg.index);
-      startSimulation(recording.script, recording.startingUrl);
+      startSimulation(recording.data, recording.startingUrl);
     }
     else if (msg.type == "stopRecording")
     {
@@ -275,16 +278,24 @@ function stopRecording()
 
   changeRecordingStatus("stop");
   setExtensionIcon();
-  generateScript();
+  processRecording();
 }
 
-function startSimulation(script, startingUrl)
+function startSimulation(data, startingUrl)
 {
   chrome.tabs.create({ url: startingUrl, active: false }, function(tab) 
   {    
     chrome.tabs.update(tab.id, { active: true });
-    // Inject script to url
-    chrome.tabs.executeScript( tab.id, {code: script} );
+
+    // Inject jquery 
+    chrome.tabs.executeScript(tab.id, {file: "scripts/jquery-2.1.0.min.js"}, function() {
+      // Inject script with array of commands as json  
+      chrome.tabs.executeScript( tab.id, {code: "var commandsJson =" + JSON.stringify(data)}, function() {
+        // Inject script with execution logic 
+        chrome.tabs.executeScript(tab.id, {file: "scripts/executionScript.js"});
+      });
+    });
+
   }); 
 }
 
@@ -304,97 +315,36 @@ function clearData()
   });
 }
 
-// Generates a script from all saved commands
-// and injects it to the new tab to start simulation
-function generateScript()
+// Process the recording before saving
+function processRecording()
 {
-    var commands = [];
-    var script = "";
-    var action = "";
+  // We have something to save ?
+  if (ExtensionData.commands.length < 2)
+    return;
 
-    // The url when user started his recording
-    var startingUrl = "";
-    var numOfCommands = ExtensionData.commands.length;
+  // The starting url of the recording
+  var startingUrl = "";
 
-    script += "var actions = [];" + "\n\n";
-
-    for (var i = 0; i < numOfCommands; i++) 
+  for (var i = 0; i < ExtensionData.commands.length; i++)
+  {
+    if (ExtensionData.commands[i].id == "url")
     {
-        var command = ExtensionData.commands[i]; 
-
-        if (command.id == "url")
-        {
-            startingUrl = ExtensionData.commands[i].name;
-            continue;
-        }
-
-        switch(command.id)
-        {
-            case "click":
-            case "click_input_submit":
-                action = "$('" + command.name + "').trigger('click')";
-                break;
-
-            case "click_a":    
-                action = command.name;
-                break;
-
-            case "click_input_text":
-                action = "$('" + command.name + "').focus()"; 
-                break;
-
-            case "scroll":
-                var coords = command.name.split(",");
-                action = "window.scrollTo(" + coords[0] + "," + coords[1] + ")";
-                break;
-
-            case "keyboard":
-                action = command.name;
-                break;
-
-            case "screenshot":
-                action = "window.open('" + command.name + "')";
-                break;
-        }
-
-        //script += action;
-        // Set timeout for each command
-        if (action.length > 1)
-        {
-          script += "actions.push({ action:" + action + ", time: " + command.time + " });";
-          script += "\n";
-        }
+      startingUrl = ExtensionData.commands[i].name;
+      break;
     }
+  }
 
-    script += "$('document').ready(function() {" + "\n";
-    script += "process_action(0);" + "\n";
-    // Close document.ready
-    script += "});" + "\n\n";
+  // Format the recording time 
+  var recordingLength = formatRecordingLength();
 
-    script += "function process_action(i) {" + "\n" +
-    " alert(i);" +
-    "if (i < actions.length-1) {" +
-        "setTimeout(function() {" +
-           "process_action(i+1);" +
-        "}, 1000); } }" + "\n";
-
-    console.log(script);
-
-    // Format the recording time 
-    var recordingLength = formatRecordingLength();
-
-    // When the script is ready
+  // Capture an image for the recording
+  // to be display at the GUI
+  chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT, 
+    { format: "jpeg" , quality: 8 }, function(captureUrl) 
+  {
+    saveRecording(ExtensionData.commands ,startingUrl, captureUrl, recordingLength);
+    
     // we can clear all data
     clearData();
-
-    if (numOfCommands > 1)
-    {
-      // Capture an image for the recording to be displayed 
-      chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT, 
-        { format: "jpeg" , quality: 10 }, function(dataUrl) 
-      {
-        saveRecording(script ,startingUrl, dataUrl, recordingLength);
-      });
-      //startSimulation(script, startingUrl);
-    }
+  });
 }

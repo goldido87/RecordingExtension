@@ -27,7 +27,7 @@
 	list-style-type: none;
 
 	height: 74px;
-	background-image: url(../img/recordItem.png);
+	background-image: url(../img/recordItem_clean.png);
 
 	border-bottom-style: solid;
 	border-bottom-width: 3px;
@@ -46,18 +46,19 @@
 {
 	display: inline-block;
 	position: absolute;
-	margin-top: 15px;
-	margin-left: 17px;
-	font-size: 20;
+	margin-top: 7px;
+	margin-left: 15px;
+	color: #72CBCB;
+	font-size: 28;
 }
 
 .guideTime
 {
 	display: inline-block;
 	position: absolute;
-	margin-top: 53px;
-	margin-left: 15px;
-	font-size: 15;
+	margin-top: 51px;
+	margin-left: 16px;
+	font-size: 16;
 }
 
 .playBtn

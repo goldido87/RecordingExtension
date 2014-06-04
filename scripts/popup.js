@@ -84,11 +84,16 @@ function init()
     {
         var recording = ExtensionData.recordings[i];
 
+        // Format the recording date
+        var date = new Date(recording.time);
+        var yearStr = date.getYear().toString();
+        var dateFormat = date.getDate() + "." + date.getMonth() + "." + yearStr.substring(1, yearStr.length);
+
         var li = "<li id=" + recording.id + "><div class='recordItem'>" +
                     "<input type='image' src='img/playBtn.png' class='playBtn' />" + 
                     "<img class='recordCapture' src='" + recording.capture + "'/>" +
-                    "<div class='guideName'>GUIDE " + recording.id + "</div>" + 
-                    "<div class='guideTime'>" + recording.length + " | " + recording.time + "</div>" +
+                    "<div class='guideName'>Record " + recording.id + "</div>" + 
+                    "<div class='guideTime'>" + recording.length + " | " + dateFormat + "</div>" +
                     "<button class='shareBtn'/>" +
                     "<button class='editBtn'/>" +
                     "<button class='deleteBtn'/></div></li>";
