@@ -48,7 +48,26 @@ $("document").ready(function()
             port.postMessage({type: "stopRecording"});
         
     });
+	
+	// Take screenshot button
+    $( '#screenshotBtn' ).click(function() {
 
+        if (ExtensionData.appStatus == "stop")
+            // Do nothing if recording isn't active 
+        else
+            port.postMessage({type: "screenshot"});
+        
+    });
+
+	// Write note button
+    $( '#noteBtn' ).click(function() {
+
+        if (ExtensionData.appStatus == "stop")
+            // Do nothing if recording isn't active 
+        else
+            port.postMessage({type: "note"});
+        
+    });
 
     // Request data load
     port.postMessage({type: "load"});
