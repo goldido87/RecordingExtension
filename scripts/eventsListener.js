@@ -197,6 +197,12 @@ DB_load(function()
         // Paint it all green when scrolling stops.
         scrollFunction();
       })
+	  
+	  // Close note event
+	    $("#btnCloseNote").click(function (event){ 
+			// TODO: save data from the note dialogue
+		});
+
 });
 
 

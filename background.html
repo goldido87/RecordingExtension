@@ -4,10 +4,12 @@
   <meta charset="utf-8">
   <title>jQuery UI Dialog - Modal form</title>
   <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" type="text/css" href="css/noteStyle.css">
   <script src="scripts/jquery-ui-1.10.4.custom.min.js"></script>
   <script src="scripts/jquery-2.1.0.min.js"></script>
   <script src="scripts/utils.js"></script>
   <script src="scripts/background.js"></script>
+  <script src="scripts/Note.js"></script>
 
   <link rel="stylesheet" href="/resources/demos/style.css">
   <style>
@@ -71,6 +73,14 @@
 </div>
 <button id="create-user">Create new user</button>
  
+<div id="noteWindow" class="noteWindow">
+	<form>
+		<input type="text" class="noteTitle" value="Title" /> 
+	</form>
+	<textarea rows="5" cols="32" class="noteMessage"> Message
+	</textarea>
+	<button id="btnCloseNote" class="btnCloseNote" ></button>
+</div>
  
 </body>
 </html>

@@ -221,13 +221,17 @@ chrome.runtime.onConnect.addListener(function(port) {
       clearData();
       port.postMessage({type: "initClient"}); 
     }
-	else if (command == "screenshot")
+	else if (msg.type == "screenshot")
 	{
 		chrome.tabs.captureVisibleTab(chrome.windows.WINDOW_ID_CURRENT, 
 		{ format: "jpeg" , quality: 10 }, function(dataUrl) 
 		  {
 			  saveData("screenshot", dataUrl);
 		});
+	}
+	else if (msg.type == "showNote")
+	{
+		loadNoteDialogue();
 	}
   });
 });
@@ -364,3 +368,14 @@ function processRecording()
     clearData();
   });
 }
+
+
+ function unloadNoteDialogue() 
+ {    
+	 $('#noteWindow').fadeOut("slow");
+ }    
+ 
+ function loadNoteDialogue() 
+ {    
+	$('#noteWindow').fadeIn("slow");  
+ }  
